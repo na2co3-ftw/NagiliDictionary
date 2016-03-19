@@ -667,8 +667,8 @@ class PatuuPanwan
       end
       if due_date <= date_string
         @patuu.tweet("@ayukawamay 最近造語がないですよ。")
+        change_due_date
       end
-      change_due_date
     end
   end
 
