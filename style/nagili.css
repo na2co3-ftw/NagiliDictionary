@@ -1,0 +1,518 @@
+﻿/*************************************************************************************************/
+/* webfont                                                                                       */
+/*************************************************************************************************/
+
+@font-face {
+    font-family:           "custom-hacm";
+    src:                   local("kardinal"), url("../page/font/kardinal.woff") format("woff"), url("../page/font/kardinal.ttf") format("truetype");
+}
+
+
+
+/*************************************************************************************************/
+/* body                                                                                          */
+/*************************************************************************************************/
+
+body {
+	margin:                0px;
+	padding:               0px;
+	font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
+	font-size:             16px;
+	background-color:      #CCFFFF;
+	overflow-x:            hidden;
+	overflow-y:            scroll;
+}
+
+div.main {
+    width:                 1140px;
+    margin:                0px auto;
+    padding:               0px;
+}
+
+div.main div.menu {
+    width:                 300px;
+    margin:                0px;
+    padding:               30px 0px 30px 0px;
+    float:                 left;
+}
+
+div.main div.menu a.title {
+    margin:                0px 0px 25px 0px;
+    padding:               0px;
+    text-decoration:       none;
+    display:               block;
+}
+
+div.main div.menu a.title img {
+    margin:                0px;
+    padding:               0px;
+}
+
+div.main div.menu a.title h1 {
+    margin:                3px 0px 0px 0px;
+    padding:               0px;
+    color:                 #264D3D;
+    font-family:           "Times New Roman";
+    font-size:             32px;
+    font-weight:           bold;
+    text-decoration:       none;
+    text-align:            center;
+}
+
+div.main div.menu a.title h2 {
+    margin:                0px 0px 3px 0px;
+    padding:               0px;
+    color:                 #264D3D;
+    font-size:             16px;
+    font-weight:           bold;
+    text-decoration:       none;
+    text-align:            center;
+}
+
+div.main div.menu form,
+div.main div.content div.suggest form {
+    margin:                15px 0px 15px 0px;
+    padding:               0px;
+    color:                 #051A1A;
+    text-align:            center;
+}
+
+div.main div.menu form span.small {
+    color:                 #3D9999;
+    font-size:             14px;
+}
+
+div.main div.menu form.request {
+    margin:                15px 0px 15px 0px;
+}
+
+div.main div.content div.suggest form {
+    margin:                5px 0px 0px 0px;
+}
+
+div.main div.content div.suggest ol form {
+    margin:                5px 0px 0px 0px;
+    display:               inline;
+}
+
+div.main div.menu form input[type="text"] {
+    margin:                0px 0px 5px 0px;
+    padding:               2px 4px;
+    color:                 #051A1A;
+    font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
+    font-size:             16px;
+    line-height:           20px;
+    background-color:      #CCFFFF;
+    border:                1px #3D9999 solid;
+    outline:               none;
+}
+
+div.main div.menu form input[type="submit"],
+div.main div.content div.suggest form input[type="submit"] {
+    margin:                0px 0px 5px 0px;
+    padding:               2px 8px;
+    color:                 #051A1A;
+    font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
+    font-size:             16px;
+    line-height:           20px;
+    background-color:      #66CCCC;
+    border:                1px #3D9999 solid;
+    outline:               none;
+}
+
+div.main div.menu form input[type="radio"],
+div.main div.menu form input[type="checkbox"] {
+    margin:                0px 3px 0px 0px;    
+} 
+
+div.main div.menu form input[type="checkbox"].random {
+    margin:                6px 3px 0px 0px;    
+} 
+
+div.main div.menu form div.margin {
+    margin:                0px 0px 10px 0px;
+    padding:               0px;
+}
+
+div.main div.content div.suggest ol form input[type="submit"] {
+    margin:                1px 0px 1px 10px;
+    padding:               0px 5px;
+    color:                 #051A1A;
+    font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
+    font-size:             16px;
+    line-height:           20px;
+    background-color:      #66CCCC;
+    border:                1px #3D9999 solid;
+    outline:               none;
+}
+
+div.main div.content div.suggest form input[type="file"] {
+    color:                 #051A1A;
+    font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
+    font-size:             16px;
+    line-height:           20px;
+}
+
+div.main div.content div.suggest form textarea {
+    margin:                0px;
+    padding:               2px 4px;
+    color:                 #051A1A;
+    font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
+    font-size:             16px;
+    line-height:           20px;
+    background-color:      #CCFFFF;
+    border:                1px #3D9999 solid;
+    resize:                none;
+    outline:               none;
+}
+
+div.main div.content {
+    width:                 800px;
+    padding:               20px 0px 20px 40px;
+    float:                 right;
+}
+
+div.main div.content div.word,
+div.main div.content div.mana-word {
+    margin:                10px 0px;
+    padding:               5px 8px;
+    border:                1px #3D9999 solid;
+    color:                 #051A1A;
+    line-height:           20px;
+}
+
+div.main div.content div.word h1 {
+    margin:                0px 0px 8px 0px;
+    padding:               0px 5px;
+    font-size:             18px;
+    line-height:           22px;
+    font-weight:           normal;
+    border-bottom:         1px #3D9999 solid;
+}
+
+div.main div.content div.word h1 table {
+    margin:                0px;
+    padding:               0px;
+    vertical-align:        bottom;
+}
+
+div.main div.content div.word h1 table td {
+    margin:                0px;
+    padding:               0px;
+}
+
+div.main div.content div.word h1 table td.mana,
+div.main div.content div.word h1 table td.yula,
+div.main div.content div.word h1 table td.kanji,
+div.main div.content div.word h1 table td.hangeul {
+    padding:               0px 15px 0px 0px;
+}
+
+div.main div.content div.word h1 table td.mana {
+    font-family:           inherit;
+    font-size:             28px;
+    line-height:           33px;
+    font-weight:           bold;
+}
+
+div.main div.content div.word h1 table td.yula {
+    font-family:           inherit;
+    line-height:           33px;
+}
+
+div.main div.content div.word h1 table td.hacm {
+    font-family:           "custom-hacm";
+    line-height:           33px;
+}
+
+div.main div.content div.word div.noun {
+    color:                 #992020;
+    font-size:             18px;
+    line-height:           22px;
+}
+
+div.main div.content div.word div.noun span.box {
+    margin:                0px 4px 0px 2px;
+    padding:               1px 2px;
+    font-size:             12px;
+    color:                 #992020;
+    border:                1px #992020 solid;
+    background-color:      #FFB5B5;
+}
+
+div.main div.content div.word div.verb {
+    color:                 #202099;
+    font-size:             18px;
+    line-height:           22px;
+}
+
+div.main div.content div.word div.verb span.box {
+    margin:                0px 4px 0px 2px;
+    padding:               1px 2px;
+    font-size:             12px;
+    color:                 #202099;
+    border:                1px #202099 solid;
+    background-color:      #B5B5FF;
+}
+
+div.main div.content div.word div.adjective {
+    color:                 #999920;
+    font-size:             18px;
+    line-height:           22px;
+}
+
+div.main div.content div.word div.adjective span.box {
+    margin:                0px 4px 0px 2px;
+    padding:               1px 2px;
+    font-size:             12px;
+    color:                 #999920;
+    border:                1px #999920 solid;
+    background-color:      #FFFFB5;
+}
+
+div.main div.content div.word div.adverb {
+     color:                 #5D2099;
+     font-size:             18px;
+     line-height:           22px;
+ }
+
+div.main div.content div.word div.adverb span.box {
+    margin:                0px 4px 0px 2px;
+    padding:               1px 2px;
+    font-size:             12px;
+    color:                 #5D2099;
+    border:                1px #5D2099 solid;
+    background-color:      #DAB5FF;
+}
+
+div.main div.content div.word div.conjunction {
+    color:                 #209920;
+    font-size:             18px;
+    line-height:           22px;
+}
+
+div.main div.content div.word div.conjunction span.box {
+    margin:                0px 4px 0px 2px;
+    padding:               1px 2px;
+    font-size:             12px;
+    color:                 #209920;
+    border:                1px #209920 solid;
+    background-color:      #B5FFB5;
+}
+
+div.main div.content div.word div.particle {
+     color:                 #995D20;
+     font-size:             18px;
+     line-height:           22px;
+}
+
+div.main div.content div.word div.particle span.box {
+    margin:                0px 4px 0px 2px;
+    padding:               1px 2px;
+    font-size:             12px;
+    color:                 #995D20;
+    border:                1px #995D20 solid;
+    background-color:      #FFDAB5;
+}
+
+div.main div.content div.word div.interjection,
+div.main div.content div.word div.suffix {
+    color:                 #5D9920;
+    font-size:             18px;
+    line-height:           22px;
+}
+
+div.main div.content div.word div.interjection span.box,
+div.main div.content div.word div.suffix span.box {
+    margin:                0px 4px 0px 2px;
+    padding:               1px 2px;
+    font-size:             12px;
+    color:                 #5D9920;
+    border:                1px #5D9920 solid;
+    background-color:      #DAFFB5;
+}
+
+div.main div.content div.word div.noun span.genre,
+div.main div.content div.word div.verb span.genre,
+div.main div.content div.word div.adjective span.genre,
+div.main div.content div.word div.adverb span.genre,
+div.main div.content div.word div.conjunction span.genre,
+div.main div.content div.word div.particle span.genre,
+div.main div.content div.word div.interjection span.genre,
+div.main div.content div.word div.suffix span.genre, {
+    margin:                0px 4px 0px 2px;
+    padding:               1px 2px;
+    font-size:             12px;
+    border:                1px #3D9999 solid;
+}
+
+div.main div.content div.word div.synonym {
+    line-height:           22px;
+}
+
+div.main div.content div.word div.synonym span.bracket {
+    margin:                0px 4px 0px 2px;
+    padding:               1px 2px;
+    font-size:             12px;
+    border:                1px #3D9999 solid;
+}
+
+div.main div.content div.word div.information {
+    color:                 #3D9999;
+    font-size:             14px;
+    line-height:           18px;
+}
+
+div.main div.content div.word div.usage {
+    margin:                4px 0px 0px 0px;
+    padding:               4px 0px 0px 0px;
+    border-top:            1px #3D9999 dashed;
+}
+
+div.main div.content div.word span.small {
+    font-size:             14px;
+}
+
+div.main div.content div.word span.tag {
+    margin:                0px 4px 0px -2px;
+    padding:               0px;
+    font-size:             12px;
+}
+
+div.main div.content div.mana-word div.left {
+    width:                 100px;
+    margin:                0px;
+    padding:               0px;
+    text-align:            center;
+    float:                 left;
+}
+
+div.main div.content div.mana-word div.left span.mana {
+    width:                 100px;
+    height:                100px;
+    margin:                3px 0px 0px 0px;
+    padding:               0px;
+    border:                1px #3D9999 solid;
+    font-size:             70px;
+    line-height:           100px;
+    text-align:            center;
+    display:               inline-block;
+}
+
+div.main div.content div.mana-word div.right {
+    margin:                0px;
+    padding:               0px 0px 0px 20px;
+    float:                 left;
+}
+
+div.main div.content div.mana-word div.right table {
+    margin:                0px;
+    padding:               0px;
+}
+
+div.main div.content div.mana-word div.right table tr td {
+    margin:                0px;
+    padding:               0px 8px 0px 0px;
+    vertical-align:        top;
+}
+
+div.main div.content div.mana-word div.clear {
+    margin:                0px;
+    padding:               0px;
+    clear:                 both;
+}
+
+div.main div.content div.suggest {
+    margin:                10px 0px;
+    padding:               5px 8px;
+    border:                1px #3D9999 solid;
+    color:                 #051A1A;
+    line-height:           20px;
+}
+
+div.main div.content div.suggest ol {
+    margin:                0px;
+    padding:               0px 0px 0px 40px;
+}
+
+div.main div.content div.suggest li {
+    padding:               0px 0px 0px 3px;
+    color:                 #051A1A;
+    line-height:           20px;
+    text-align:            left;
+}
+
+div.main div.content div.suggest span.maybe {
+    margin:                0px 8px 0px 0px;
+    font-size:             14px;
+}
+
+div.main div.content a {
+    color:                 #E65045;
+    text-decoration:       underline;
+}
+
+div.main div.content a.example {
+    color:                 #051A1A;
+    text-decoration:       none;
+}
+
+div.main div.content span.mana {
+    font-family:           "custom-mana", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
+}
+
+div.main div.content div.number {
+    width:                 450px;
+    margin:                10px auto;
+    padding:               5px 0px;
+    border:                1px #3D9999 solid;
+    color:                 #051A1A;
+    line-height:           20px;
+    text-align:            center;
+}
+
+div.main div.content div.number span.fraction {
+    margin:                0px 8px;
+    width:                 380px;
+    vertical-align:        middle;
+    display:               inline-block;
+}
+
+div.main div.content div.number span.fraction span.page {
+    width:                 380px;
+    border-bottom:         1px #051A1A solid;
+    display:               block;
+}
+
+div.main div.content div.number span.fraction span.page a,
+div.main div.content div.number span.fraction span.page span.number {
+    width:                 33px;
+    text-align:            center;
+    display:               inline-block;
+}
+
+div.main div.content div.number span.fraction span.total {
+    width:                 380px;
+    display:               block;
+}
+
+div.main div.content div.number span.fraction span.total span.number {
+    width:                 80px;
+    text-align:            center;
+    display:               inline-block;
+}
+
+div.main div.content div.number span.fraction span.total span.small {
+    font-size:             12px;
+}
+
+div.main div.content div.number div.time {
+    color:                 #3D9999;
+    font-size:             12px;
+    line-height:           15px;
+}
+
+div.main div.content div.number a {
+    color:                 #E65045;
+    text-decoration:       none;
+}
