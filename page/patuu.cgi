@@ -9,7 +9,7 @@ $:.unshift(File.dirname(__FILE__))
 Dir.chdir(File.dirname(__FILE__))
 
 require 'pp'
-require 'material/utilities'
+require 'material/nagili_utilities'
 require 'material/twitter'
 
 
