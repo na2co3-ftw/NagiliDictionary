@@ -333,9 +333,6 @@ module NagiliUtilities;extend self
   def update_dictionary_data(dictionary)
     output = "word,trans,exp,level,memory,modify,pron,filelink\n"
     dictionary.each do |data|
-      # word = data[0].gsub(/\"\"/, "[<[QUOTE]>]").gsub("\"", "\"\"").gsub("[<[QUOTE]>]", "\"\"")
-      # translation = data[1].gsub(/\"\"/, "[<[QUOTE]>]").gsub("\"", "\"\"").gsub("[<[QUOTE]>]", "\"\"")
-      # explanation = data[2].gsub(/\"\"/, "[<[QUOTE]>]").gsub("\"", "\"\"").gsub("[<[QUOTE]>]", "\"\"")
       word = data[0].gsub("\"\"", "\"").gsub("\"", "\"\"")
       translation = data[1].gsub("\"\"", "\"").gsub("\"", "\"\"")
       explanation = data[2].gsub("\"\"", "\"").gsub("\"", "\"\"")
