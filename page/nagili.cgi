@@ -16,8 +16,6 @@ class NagiliDictionary;include NagiliUtilities
 
   def initialize(cgi)
     @cgi = cgi
-    @password = ""
-    load_password
   end
 
   def run
@@ -52,10 +50,6 @@ class NagiliDictionary;include NagiliUtilities
     rescue => exception
       error(exception.message + "\n" + exception.backtrace.join("\n"))
     end
-  end
-
-  def load_password
-    @password = File.read("nagili/password.txt").strip
   end
 
   def default
@@ -164,7 +158,7 @@ class NagiliDictionary;include NagiliUtilities
   def control
     html = ""
     requests = NagiliUtilities.requests_data
-    if @cgi["password"] == @password
+    if @cgi["password"] == NagiliUtilities.password
       html << "<div class=\"suggest\">\n"
       html << "<form action=\"nagili.cgi\" method=\"post\" enctype=\"multipart/form-data\">\n"
       html << "<input type=\"file\" name=\"file\">&nbsp;&nbsp;<input type=\"submit\" value=\"更新\"></input>\n"
@@ -196,7 +190,7 @@ class NagiliDictionary;include NagiliUtilities
 
   def delete
     html = ""
-    if @cgi["password"] == @password
+    if @cgi["password"] == NagiliUtilities.password
       delete_data = @cgi.params["delete"]
       deletes = delete_data.map do |data|
         fixed_data = data.split(",", 2)
@@ -230,7 +224,7 @@ class NagiliDictionary;include NagiliUtilities
 
   def update
     html = ""
-    if @cgi.params["password"][0].read == @password
+    if @cgi.params["password"][0].read == NagiliUtilities.password
       file = @cgi.params["file"][0].read
       size = NagiliUtilities.save_dictionary_data(file)
       html << "<div class=\"suggest\">\n"

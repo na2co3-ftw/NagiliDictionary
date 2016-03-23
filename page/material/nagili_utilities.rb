@@ -236,6 +236,10 @@ module NagiliUtilities;extend self
     return requests
   end
 
+  def password
+    return File.read("nagili/password.txt").strip
+  end
+
   # 辞典データからランダムにデータを取り出して、ツイッターで呟くためのテキストに変換して返します。
   # 自動的に 140 文字以下になるように調整されます。
   def random_tweet_text
