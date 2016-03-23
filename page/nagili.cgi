@@ -497,6 +497,9 @@ class NagiliDictionary;include NagiliUtilities
     html << "質問等はTwitterアカウントで mei felixian (@ayukawamay) が受け付けております。<br>\n"
     html << "また、このオンライン辞書は Ziphil Shaleiras (@Ziphil) が作成しました。<br>\n"
     html << "辞書に関する不具合や質問に関しては、こちらへお願いします。<br>\n"
+    html << "<br>\n"
+    html << "・ソースコード<br>\n"
+    html << "凪霧辞典プロジェクト (オンライン凪霧辞典, 凪霧辞典bot, 白雲項) のソースコードは<a href=\"https://github.com/Ziphil/NagiliDictionary\" target=\"blank\">GitHub</a>上で公開されています。"
     html << "</div>\n"
     print(html)
   end
