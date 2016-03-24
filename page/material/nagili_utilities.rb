@@ -53,7 +53,7 @@ module NagiliUtilities;extend self
               matched << data
             end
           end
-          if false
+          if agree < 5
             if word.match(/lu$/) && CONJUGATIVE_CLASSES.any?{|s| meaning.include?(s)}
               conjugation.each do |original_search, conjugation_type|
                 if word == original_search
