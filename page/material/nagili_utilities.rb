@@ -12,7 +12,7 @@ module NagiliUtilities;extend self
                   "［終助詞］" => "particle", "［格助詞］" => "particle", "［副助詞］" => "particle", "［係助詞］" => "particle",
                   "［接尾辞］" => "suffix", "［接頭辞］" => "suffix",
                   "［ユマナ］" => "noun", "［数詞］" => "noun", "［助数詞］" => "suffix"}
-  SUGGESTED_CLASSES = ["［名詞］", "［動詞］", "［形容詞］", "［副詞］", "［助動詞］"]
+  SUGGESTABLE_CLASSES = ["［名詞］", "［動詞］", "［形容詞］", "［副詞］", "［助動詞］"]
   CONJUGATIVE_CLASSES = ["［動詞］", "［形容詞］", "［助動詞］"]
   MAIN_TAGS = ["［語法］", "［文化］", "［語義］"]
   WORD_TAGS = ["［類義語］", "［反意語］", "［対義語］", "［同義語］", "［一覧］"]
@@ -66,7 +66,7 @@ module NagiliUtilities;extend self
                 if element == alphabet_search
                   dictionary.each do |sub_data|
                     if sub_data[0].gsub(/\(\d+\)/, "").strip == element
-                      SUGGESTED_CLASSES.each do |sub_class|
+                      SUGGESTABLE_CLASSES.each do |sub_class|
                         if sub_data[1].include?(sub_class)
                           suggested << [word, "一部"]
                         end
