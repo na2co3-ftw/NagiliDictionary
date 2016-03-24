@@ -388,12 +388,6 @@ class NagiliDictionary;include NagiliUtilities
   end
 
   def debug
-    output = "done"
-    ziphil = Twitter.new(:ziphil)
-    ziphil.tweet("凪霧辞典がアレ。")
-    print_html_header(false)
-    pp(ziphil.oauth_data)
-    print(output)
   end
 
   def show_mana_data
