@@ -40,6 +40,8 @@ class NagiliDictionary;include NagiliUtilities
         create_twitter_data
       when "mana"
         create_mana_data
+      when "index"
+        create_search_index
       when "patuu"
         display_patuu_function
       when "debug"
@@ -248,6 +250,14 @@ class NagiliDictionary;include NagiliUtilities
 
   def create_mana_data(create_only = false)
     NagiliUtilities.create_mana_data
+    unless create_only
+      print_html_header(false)
+      print("done")
+    end
+  end
+
+  def create_search_index(create_only = false)
+    NagiliUtilities.create_search_index
     unless create_only
       print_html_header(false)
       print("done")

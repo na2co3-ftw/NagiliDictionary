@@ -494,6 +494,33 @@ module NagiliUtilities;extend self
     end
   end
 
+  def create_search_index
+    dictionary = self.fixed_dictionary_data
+    word_index = []
+    meaning_index = Hash.new{|h, k| h[k] = []}
+    word_output = ""
+    meaning_output = ""
+    dictionary.each do |data|
+      word, meaning, _ = data
+      word_index << word
+      meaning.each_line do |line|
+        line.gsub(/［(.+)］/, "").gsub(/<(.+)>/, "").split(/\s*、\s*/).each do |each_meaning|
+          meaning_index[each_meaning.strip] << word
+        end
+      end
+    end
+    word_output << word_index.join("\n")
+    meaning_index.each do |each_meaning, words|
+      meaning_output << "#{each_meaning}: #{words.join(", ")}\n"
+    end
+    File.open("nagili/word.txt", "w") do |file|
+      file.puts(word_output)
+    end
+    File.open("nagili/meaning.txt", "w") do |file|
+      file.puts(meaning_output)
+    end
+  end
+
 end
 
 
