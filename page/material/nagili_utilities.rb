@@ -422,91 +422,75 @@ module NagiliUtilities;extend self
     mana_data = []
     single_mana_data = Hash.new{|h, k| h[k] = []}
     double_mana_data = Hash.new{|h, k| h[k] = []}
-    output_single = ""
-    output_double = ""
+    unknown_mana_data = Hash.new{|h, k| h[k] = []}
+    single_output = ""
+    double_output = ""
+    unknown_output = ""
     dictionary.each do |data|
-      word = data[0].gsub(/\(\d+\)/, "").strip
+      word = data[0].gsub(/\(\d+\)/, "").gsub(" ", "").strip
       mana = data[4]
-      if match = mana.match(/([^a-z\s\[\]\/]+)/)
-        mana_data << [word, match[1]]
+      unless word == "凡例"
+        if match = mana.match(/([^a-z\s\[\]\/]+)/)
+          mana_data << [word, match[1].to_nagili_alphabet]
+        end
       end
     end
-    mana_data = mana_data.map{|s, t| [s.gsub(" ", ""), t.to_nagili_alphabet]}
-    10.times do |i|
-      mana_data = mana_data.map do |word, mana|
-        fixed_word, fixed_mana = word, mana
-        if match = mana.match(/^([a-z]+)/)
-          if word.match(/^#{match[0]}/)
-            fixed_word = word.gsub(/^#{match[0]}/, "")
-            fixed_mana = mana.gsub(/^#{match[0]}/, "")
-          end
+    mana_data = mana_data.map do |word, mana|
+      new_word, new_mana = word, mana
+      if match = mana.match(/^([a-z]+)/)
+        if word.match(/^#{match[0]}/)
+          new_word = word.gsub(/^#{match[0]}/, "")
+          new_mana = mana.gsub(/^#{match[0]}/, "")
         end
-        if match = mana.match(/([a-z]+)$/)
-          if word.match(/#{match[0]}$/)
-            fixed_word = word.gsub(/#{match[0]}$/, "")
-            fixed_mana = mana.gsub(/#{match[0]}$/, "")
-          end
-        end
-        if i > 0
-          matched_mana = fixed_mana.split(//)[0]
-          if single_mana_data.key?(matched_mana)
-            matched_words = single_mana_data[matched_mana]
-            matched_words.each do |matched_word|
-              if fixed_word.match(/^#{matched_word}/)
-                fixed_word = fixed_word.gsub(/^#{matched_word}/, "")
-                fixed_mana = fixed_mana.gsub(/^#{matched_mana}/, "")
-              end
-            end
-          end
-          matched_mana = fixed_mana.split(//)[-1]
-          if single_mana_data.key?(matched_mana)
-            matched_words = single_mana_data[matched_mana]
-            matched_words.each do |matched_word|
-              if fixed_word.match(/#{matched_word}$/)
-                fixed_word = fixed_word.gsub(/#{matched_word}$/, "")
-                fixed_mana = fixed_mana.gsub(/#{matched_mana}$/, "")
-              end
-            end
-          end
-        end
-        next [fixed_word, fixed_mana]
       end
-      mana_data.delete_if{|s, t| s == "凡例"}
-      mana_data.delete_if{|s, t| s.match(/^\s*$/) && t.match(/^\s*$/)}
-      mana_data.each do |word, mana|
-        if mana.split(//).size == 1 && !single_mana_data[mana].include?(word)
-          single_mana_data[mana] << word
+      if match = mana.match(/([a-z]+)$/)
+        if word.match(/#{match[0]}$/)
+          new_word = word.gsub(/#{match[0]}$/, "")
+          new_mana = mana.gsub(/#{match[0]}$/, "")
         end
+      end
+      next [new_word, new_mana]
+    end
+    mana_data.delete_if{|s, t| s.match(/^\s*$/) && t.match(/^\s*$/)}
+    mana_data.each do |word, mana|
+      if mana.split(//).size == 1
+        single_mana_data[mana] << word
+      end
+    end
+    mana_data.delete_if do |word, mana|
+      splited_mana = mana.split(//)
+      if splited_mana.all?{|s| single_mana_data.key?(s)}
+        splited_mana = splited_mana.map{|s| single_mana_data[s]}
+        possible_reading = splited_mana[0].product(*splited_mana[1..-1]).map{|s| s.join("")}
+        next possible_reading.any?{|s| word == s}
+      else
+        next false
       end
     end
     mana_data.each do |word, mana|
-      if mana != "" && !mana.match(/[a-z\s]/) && !double_mana_data[mana].include?(word)
-        double_mana_data[mana] << word
-      end
-    end
-    double_mana_data.each do |mana, _|
-      mana_data.delete_if{|_, t| t == mana}
+      unknown_mana_data[mana] << word
     end
     single_mana_data.sort.each do |mana, words|
-      words = words.map{|s| s.gsub("v", "b")}
-      words = words.map do |word|
-        if words.include?(word + "n")
-          next word + "n"
-        else
-          next word
-        end
-      end
+      words = words.map{|s| (s.include?(s + "n")) ? s + "n" : s}
       words.uniq!
-      output_single << "#{mana}: #{words.join(",")}\n"
+      single_output << "#{mana}: #{words.join(",")}\n"
     end
     double_mana_data.sort.each do |mana, words|
-      output_double << "#{mana}: #{words.join(",")}\n"
+      words.uniq!
+      double_output << "#{mana}: #{words.join(",")}\n"
+    end
+    unknown_mana_data.sort.each do |mana, words|
+      words.uniq!
+      unknown_output << "#{mana}: #{words.join(",")}\n"
     end
     File.open("nagili/single_mana.txt", "w") do |file|
-      file.puts(output_single)
+      file.puts(single_output)
     end
     File.open("nagili/double_mana.txt", "w") do |file|
-      file.puts(output_double)
+      file.puts(double_output)
+    end
+    File.open("nagili/unknown_mana.txt", "w") do |file|
+      file.puts(unknown_output)
     end
   end
 
