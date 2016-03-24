@@ -172,7 +172,8 @@ class NagiliDictionary;include NagiliUtilities
       html << "<form action=\"nagili.cgi\" method=\"post\">\n"
       html << "<input type=\"hidden\" name=\"mode\" value=\"delete\"></input><input type=\"hidden\" name=\"password\" value=\"zkgburpdvq\"></input>\n"
       html << "<input type=\"submit\" value=\"選択項目を削除\"></input>\n"
-      requests.each_slice(100).with_index do |sliced_requests, i|
+      (0..(requests.size / 100)).each do |i|
+        sliced_requests = requests[i * 100, 100]
         html << "<table class=\"request\">\n"
         (0...50).each do |j|
           if j <= sliced_requests.size - 1
