@@ -35,6 +35,7 @@ class NagiliDictionary;include NagiliUtilities
       when "update"
         update
         create_mana_data(true)
+        create_search_index(true)
         change_due_date(true)
       when "twitter"
         create_twitter_data
