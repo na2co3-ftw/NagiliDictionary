@@ -183,7 +183,7 @@ class NagiliDictionary;include NagiliUtilities
             html << "<td class=\"left-request\">#{request}</td>"
             if j + 50 <= sliced_requests.size - 1
               request = sliced_requests[j + 50].html_escape
-              html << "<td class=\"right-number\"><input type=\"checkbox\" name=\"delete\" value=\"#{i * 100 + j},#{request}\"></input> #{i * 100 + j + 51}.</td>"
+              html << "<td class=\"right-number\"><input type=\"checkbox\" name=\"delete\" value=\"#{i * 100 + j + 50},#{request}\"></input> #{i * 100 + j + 51}.</td>"
               html << "<td class=\"right-request\">#{request}</td>"
             else
               html << "<td class=\"right-number\"></td><td class=\"right-request\"></td>"
