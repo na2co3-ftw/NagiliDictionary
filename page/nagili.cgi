@@ -257,7 +257,9 @@ class NagiliDictionary;include NagiliUtilities
   def change_due_date(create_only = false)
     due_time = Time.now + 604800
     date_string = due_time.strftime("%Y/%m/%d")
-    File.open("nagili/due_date.txt", "w").print(date_string)
+    File.open("nagili/due_date.txt", "w") do |file|
+      file.print(date_string)
+    end
     unless create_only
       print_html_header(false)
       print("done: #{date_string}")
