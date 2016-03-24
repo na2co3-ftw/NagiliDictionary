@@ -499,7 +499,9 @@ module NagiliUtilities;extend self
     dictionary.each do |data|
       word, meaning, _ = data
       word_index << word
-      suggestable_index << word if SUGGESTABLE_CLASSES.any?{|s| meaning.include?(s)}
+      if !word.match(/\s/) && SUGGESTABLE_CLASSES.any?{|s| meaning.include?(s)}
+        suggestable_index << word.gsub(/\(\d+\)/, "")
+      end
       meaning.each_line do |line|
         line.gsub(/［(.+)］/, "").gsub(/<(.+)>/, "").split(/\s*、\s*/).each do |each_meaning|
           meaning_index[each_meaning.strip] << word
