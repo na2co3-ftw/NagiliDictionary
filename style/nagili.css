@@ -85,6 +85,45 @@ div.main div.menu form.request {
     margin:                15px 0px 15px 0px;
 }
 
+div.main div.menu form input[type="text"] {
+    margin:                0px 0px 5px 0px;
+    padding:               2px 4px;
+    color:                 #051A1A;
+    font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
+    font-size:             16px;
+    line-height:           20px;
+    background-color:      #CCFFFF;
+    border:                1px #3D9999 solid;
+    outline:               none;
+}
+
+div.main div.menu form input[type="submit"],
+div.main div.content div.suggest form input[type="submit"] {
+    margin:                0px 0px 5px 0px;
+    padding:               2px 8px;
+    color:                 #051A1A;
+    font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
+    font-size:             16px;
+    line-height:           20px;
+    background-color:      #66CCCC;
+    border:                1px #3D9999 solid;
+    outline:               none;
+}
+
+div.main div.menu form input[type="radio"],
+div.main div.menu form input[type="checkbox"] {
+    margin:                0px 3px 0px 0px;
+}
+
+div.main div.menu form input[type="checkbox"].random {
+    margin:                6px 3px 0px 0px;
+}
+
+div.main div.menu form div.margin {
+    margin:                0px 0px 10px 0px;
+    padding:               0px;
+}
+
 div.main div.content div.suggest form {
     margin:                5px 0px 0px 0px;
 }
@@ -123,45 +162,6 @@ div.main div.content div.suggest form table.request tr td.left-request {
 div.main div.content div.suggest form table.request tr td.right-number {
     padding:               0px 0px 0px 5px;
     border-left:           1px #3D9999 dashed;
-}
-
-div.main div.menu form input[type="text"] {
-    margin:                0px 0px 5px 0px;
-    padding:               2px 4px;
-    color:                 #051A1A;
-    font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
-    font-size:             16px;
-    line-height:           20px;
-    background-color:      #CCFFFF;
-    border:                1px #3D9999 solid;
-    outline:               none;
-}
-
-div.main div.menu form input[type="submit"],
-div.main div.content div.suggest form input[type="submit"] {
-    margin:                0px 0px 5px 0px;
-    padding:               2px 8px;
-    color:                 #051A1A;
-    font-family:           "Arial", "IPA Pゴシック", "ＭＳ Ｐゴシック", sans-serif;
-    font-size:             16px;
-    line-height:           20px;
-    background-color:      #66CCCC;
-    border:                1px #3D9999 solid;
-    outline:               none;
-}
-
-div.main div.menu form input[type="radio"],
-div.main div.menu form input[type="checkbox"] {
-    margin:                0px 3px 0px 0px;    
-} 
-
-div.main div.menu form input[type="checkbox"].random {
-    margin:                6px 3px 0px 0px;    
-} 
-
-div.main div.menu form div.margin {
-    margin:                0px 0px 10px 0px;
-    padding:               0px;
 }
 
 div.main div.content div.suggest ol form input[type="submit"] {
