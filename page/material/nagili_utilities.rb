@@ -27,6 +27,17 @@ module NagiliUtilities;extend self
     dictionary = self.fixed_dictionary_data
     matched = []
     suggested = []
+    conjugation = []
+    SUFFIXES.each do |suffix, suffix_type|
+      VOICES.each do |voice, voice_type|
+        unless voice + suffix == "lu"
+          if search.to_nagili_alphabet.match(/#{voice + suffix}$/)
+            original_search = search.to_nagili_alphabet.gsub(/#{voice + suffix}$/, "lu")
+            conjugation << [original_search, voice_type + suffix_type]
+          end
+        end
+      end
+    end
     dictionary.each do |data|
       word, meaning, synonym, ethymology, mana, usage, example = data
       word = word.gsub(/\(\d+\)/, "").strip
@@ -42,11 +53,9 @@ module NagiliUtilities;extend self
           end
           if false
             if word.match(/lu$/) && CONJUGATIVE_CLASSES.any?{|s| meaning.include?(s)}
-              SUFFIXES.each do |suffix, suffix_type|
-                VOICES.each do |voice, voice_type|
-                  if word.gsub(/lu$/, voice + suffix) == search.to_nagili_alphabet && voice + suffix != "lu"
-                    suggested << [word, voice_type + suffix_type] 
-                  end
+              conjugation.each do |original_search, conjugation_type|
+                if word == original_search
+                  suggested << [word, conjugation_type]
                 end
               end
             end
