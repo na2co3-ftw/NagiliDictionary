@@ -25,6 +25,7 @@ module NagiliUtilities;extend self
   # 検索結果とサジェスト結果の 2 つのデータを格納した配列を返します。
   def search_word(search, type, agree)
     dictionary = self.fixed_dictionary_data
+    suggestables = self.suggestable_data
     matched = []
     suggested = []
     conjugation = []
@@ -63,16 +64,8 @@ module NagiliUtilities;extend self
             end
             if word.match(/\s/)
               word.split(/\s/).each do |element|
-                if element == alphabet_search
-                  dictionary.each do |sub_data|
-                    if sub_data[0].gsub(/\(\d+\)/, "").strip == element
-                      SUGGESTABLE_CLASSES.each do |sub_class|
-                        if sub_data[1].include?(sub_class)
-                          suggested << [word, "一部"]
-                        end
-                      end
-                    end
-                  end
+                if element == alphabet_search && suggestables.include?(element)
+                  suggested << [word, "一部"]
                 end
               end
             end
@@ -236,6 +229,10 @@ module NagiliUtilities;extend self
       end
     end
     return double_mana
+  end
+
+  def suggestable_data
+    return File.read("nagili/suggestable.txt").split("\n")
   end
 
   def requests_data
@@ -509,11 +506,14 @@ module NagiliUtilities;extend self
     dictionary = self.fixed_dictionary_data
     word_index = []
     meaning_index = Hash.new{|h, k| h[k] = []}
+    suggestable_index = []
     word_output = ""
     meaning_output = ""
+    suggestable_output = ""
     dictionary.each do |data|
       word, meaning, _ = data
       word_index << word
+      suggestable_index << word if SUGGESTABLE_CLASSES.any?{|s| meaning.include?(s)}
       meaning.each_line do |line|
         line.gsub(/［(.+)］/, "").gsub(/<(.+)>/, "").split(/\s*、\s*/).each do |each_meaning|
           meaning_index[each_meaning.strip] << word
@@ -524,11 +524,15 @@ module NagiliUtilities;extend self
     meaning_index.each do |each_meaning, words|
       meaning_output << "#{each_meaning}: #{words.join(", ")}\n"
     end
+    suggestable_output << suggestable_index.join("\n")
     File.open("nagili/word.txt", "w") do |file|
       file.puts(word_output)
     end
     File.open("nagili/meaning.txt", "w") do |file|
       file.puts(meaning_output)
+    end
+    File.open("nagili/suggestable.txt", "w") do |file|
+      file.puts(suggestable_output)
     end
   end
 
