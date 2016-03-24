@@ -148,10 +148,7 @@ module NagiliUtilities;extend self
   end
 
   def dictionary_data
-    data = ""
-    File.open("nagili/dictionary.csv", "r") do |file|
-      data = file.read
-    end
+    data = File.read("nagili/dictionary.csv")
     data.gsub!(/\r\n?/, "\n")
     data.sub!(/.+\n/, "")
     dictionary = data.scan(/"(.*?)","(.*?)","(.*?)",(.*?),(.*?),(.*?),"(.*?)"\n/m)
@@ -204,10 +201,7 @@ module NagiliUtilities;extend self
   end
 
   def single_mana_data
-    data = ""
-    File.open("nagili/single_mana.txt", "r") do |file|
-      data = file.read
-    end
+    data = File.read("nagili/single_mana.txt")
     single_mana = []
     data.each_line do |line|
       if match = line.match(/^(.+):\s*(.+)/)
@@ -218,10 +212,7 @@ module NagiliUtilities;extend self
   end
 
   def double_mana_data
-    data = ""
-    File.open("nagili/double_mana.txt", "r") do |file|
-      data = file.read
-    end
+    data = File.read("nagili/double_mana.txt")
     double_mana = []
     data.each_line do |line|
       if match = line.match(/^(.+):\s*(.+)/)
@@ -236,12 +227,7 @@ module NagiliUtilities;extend self
   end
 
   def requests_data
-    data = ""
-    File.open("nagili/request.txt", "r") do |file|
-      data = file.read
-    end
-    requests = data.split(/\r*\n/).reject{|s| s.match(/^\s*$/)}
-    return requests
+    return File.read("nagili/request.txt").split(/\r*\n/).reject{|s| s.match(/^\s*$/)}
   end
 
   def password
