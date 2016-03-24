@@ -28,11 +28,13 @@ module NagiliUtilities;extend self
     matched = []
     suggested = []
     conjugation = []
+    alphabet_search = search.to_nagili_alphabet
+    hangeul_search = search.to_nagili_hangeul
     SUFFIXES.each do |suffix, suffix_type|
       VOICES.each do |voice, voice_type|
         unless voice + suffix == "lu"
-          if search.to_nagili_alphabet.match(/#{voice + suffix}$/)
-            original_search = search.to_nagili_alphabet.gsub(/#{voice + suffix}$/, "lu")
+          if alphabet_search.match(/#{voice + suffix}$/)
+            original_search = alphabet_search.gsub(/#{voice + suffix}$/, "lu")
             conjugation << [original_search, voice_type + suffix_type]
           end
         end
@@ -43,11 +45,11 @@ module NagiliUtilities;extend self
       word = word.gsub(/\(\d+\)/, "").strip
       if type == 0
         if agree == 0 || agree == 5
-          if word == search.to_nagili_alphabet
+          if word == alphabet_search
             matched << data
           end
           if match = mana.match(/([^a-z\s\[\]\/]+)/)
-            if match[1] == search.to_nagili_hangeul
+            if match[1] == hangeul_search
               matched << data
             end
           end
@@ -61,7 +63,7 @@ module NagiliUtilities;extend self
             end
             if word.match(/\s/)
               word.split(/\s/).each do |element|
-                if element == search.to_nagili_alphabet
+                if element == alphabet_search
                   dictionary.each do |sub_data|
                     if sub_data[0].gsub(/\(\d+\)/, "").strip == element
                       SUGGESTED_CLASSES.each do |sub_class|
@@ -76,11 +78,11 @@ module NagiliUtilities;extend self
             end
           end
         elsif agree == 1
-          if word =~ /#{search.to_nagili_alphabet}/
+          if word =~ /#{alphabet_search}/
             matched << data
           end
           if match = mana.match(/([^a-z\s\[\]\/]+)/)
-            if match[1] =~ /#{search.to_nagili_hangeul}/
+            if match[1] =~ /#{hangeul_search}/
               matched << data
             end
           end
