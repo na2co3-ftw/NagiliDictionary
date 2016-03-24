@@ -529,15 +529,18 @@ class NagiliDictionary;include NagiliUtilities
     html << "<div class=\"word\">\n"
     word = word.gsub(/\(\d+\)/, "").strip
     if match = mana.match(/([a-z\s\[\]\/]*)\s*([^a-z\s\[\]\/]*)/)
-      html << "<h1><table><tr>"
+      html << "<h1><table>\n"
+      html << "<tr>"
       html << "<td class=\"mana\">#{match[2]}</td>"
       html << "<td class=\"yula\">#{word.to_nagili_hangeul}</td>"
       html << "<td class=\"hacm\">#{(match[1] == "") ? word : match[1]}</td>"
-      html << "</tr><tr>"
+      html << "</tr>\n"
+      html << "<tr>"
       html << "<td class=\"kanji\">#{match[2]}</td>"
       html << "<td class=\"hangeul\">#{word.to_nagili_hangeul}</td>"
       html << "<td class=\"latin\">#{(match[1] == "") ? word : match[1]}</td>"
-      html << "</tr></table></h1>\n"
+      html << "</tr>\n"
+      html << "</table></h1>\n"
     else
       html << "<h1></h1>"
     end
