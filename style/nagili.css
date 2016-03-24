@@ -89,9 +89,40 @@ div.main div.content div.suggest form {
     margin:                5px 0px 0px 0px;
 }
 
-div.main div.content div.suggest ol form {
-    margin:                5px 0px 0px 0px;
-    display:               inline;
+div.main div.content div.suggest form table.request {
+    margin:                0px 0px 5px 0px;
+    padding:               0px;
+    border-collapse:       collapse;
+}
+
+div.main div.content div.suggest form table.request tr td {
+    margin:                0px;
+    padding:               0px;
+    font-size:             16px;
+    line-height:           20px;
+    text-align:            left;
+    vertical-align:        top;
+    word-break:            break-all;
+}
+
+div.main div.content div.suggest form table.request tr td.left-number,
+div.main div.content div.suggest form table.request tr td.right-number {
+    font-size:             14px;
+    width:                 65px;
+}
+
+div.main div.content div.suggest form table.request tr td.left-request,
+div.main div.content div.suggest form table.request tr td.right-request {
+    width:                 315px;
+}
+
+div.main div.content div.suggest form table.request tr td.left-request {
+    padding:               0px 5px 0px 0px;
+}
+
+div.main div.content div.suggest form table.request tr td.right-number {
+    padding:               0px 0px 0px 5px;
+    border-left:           1px #3D9999 dashed;
 }
 
 div.main div.menu form input[type="text"] {

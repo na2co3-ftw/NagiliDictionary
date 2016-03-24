@@ -172,12 +172,32 @@ class NagiliDictionary;include NagiliUtilities
       html << "<form action=\"nagili.cgi\" method=\"post\">\n"
       html << "<input type=\"hidden\" name=\"mode\" value=\"delete\"></input><input type=\"hidden\" name=\"password\" value=\"zkgburpdvq\"></input>\n"
       html << "<input type=\"submit\" value=\"選択項目を削除\"></input>\n"
-      html << "<ol>\n"
-      requests.each_with_index do |request, i|
-        html << "<li><input type=\"checkbox\" name=\"delete\" value=\"#{i},#{request.html_escape}\"></input>#{request.html_escape}</li>\n"
+      requests.each_slice(100).with_index do |sliced_requests, i|
+        html << "<table class=\"request\">\n"
+        (0...50).each do |j|
+          if j <= sliced_requests.size - 1
+            request = sliced_requests[j].html_escape
+            html << "<tr>"
+            html << "<td class=\"left-number\"><input type=\"checkbox\" name=\"delete\" value=\"#{i * 100 + j},#{request}\"></input> #{i * 100 + j + 1}.</td>"
+            html << "<td class=\"left-request\">#{request}</td>"
+            if j + 50 <= sliced_requests.size - 1
+              request = sliced_requests[j + 50].html_escape
+              html << "<td class=\"right-number\"><input type=\"checkbox\" name=\"delete\" value=\"#{i * 100 + j},#{request}\"></input> #{i * 100 + j + 51}.</td>"
+              html << "<td class=\"right-request\">#{request}</td>"
+            else
+              html << "<td class=\"right-number\"></td><td class=\"right-request\"></td>"
+            end
+            html << "</tr>\n"
+          end
+        end
+        html << "</table>\n"
+        html << "<input type=\"submit\" value=\"選択項目を削除\"></input>\n"
       end
-      html << "</ol>\n"
-      html << "<input type=\"submit\" value=\"選択項目を削除\"></input>\n"
+      # requests.each_with_index do |request, i|
+      #   html << "<li><input type=\"checkbox\" name=\"delete\" value=\"#{i},#{request.html_escape}\"></input>#{request.html_escape}</li>\n"
+      # end
+      # html << "</table>\n"
+      # html << "<input type=\"submit\" value=\"選択項目を削除\"></input>\n"
       html << "</div>\n"
     else
       html << "<div class=\"suggest\">\n"
