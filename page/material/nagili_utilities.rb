@@ -226,6 +226,22 @@ module NagiliUtilities;extend self
     return File.read("nagili/suggestable.txt").split("\n")
   end
 
+  def word_index
+    return File.read("nagili/word.txt").split("\n")
+  end
+
+  def meaning_index
+    index = {}
+    File.open("nagili/meaning.txt") do |file|
+      file.each_line do |line|
+        if match = line.match(/^(.+?)\s*:\s*(.+)$/)
+          index[match[1]] = match[2].split(/\s*,\s*/)
+        end
+      end
+    end
+    return index
+  end
+
   def requests_data
     return File.read("nagili/request.txt").split(/\r*\n/).reject{|s| s.match(/^\s*$/)}
   end
