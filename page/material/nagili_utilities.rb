@@ -25,6 +25,9 @@ module NagiliUtilities;extend self
   # 検索結果とサジェスト結果の 2 つのデータを格納した配列を返します。
   def search_word(search, type, agree)
     dictionary = self.fixed_dictionary_data
+    word_index = self.word_index
+    meaning_index = self.meaning_index
+    mana_index = self.mana_index
     suggestables = self.suggestable_data
     matched = []
     suggested = []
@@ -41,66 +44,78 @@ module NagiliUtilities;extend self
         end
       end
     end
-    dictionary.each do |data|
-      word, meaning, synonym, ethymology, mana, usage, example = data
-      word = word.gsub(/\(\d+\)/, "").strip
-      if type == 0
-        if agree == 0 || agree == 5
-          if word == alphabet_search
-            matched << data
-          end
-          if match = mana.match(/([^a-z\s\[\]\/]+)/)
-            if match[1] == hangeul_search
-              matched << data
-            end
+    if type == 0
+      if agree == 0 || agree == 5
+        word_index.each do |word|
+          fixed_word = word.gsub(/\s*\(\d+\)/, "")
+          if fixed_word == alphabet_search
+            matched << word
           end
           if agree < 5
-            if word.match(/lu$/) && CONJUGATIVE_CLASSES.any?{|s| meaning.include?(s)}
+            if fixed_word.match(/lu$/)
               conjugation.each do |original_search, conjugation_type|
-                if word == original_search
-                  suggested << [word, conjugation_type]
+                if fixed_word == original_search
+                  suggested << [fixed_word, conjugation_type]
                 end
               end
             end
-            if word.match(/\s/)
-              word.split(/\s/).each do |element|
+            if fixed_word.match(/\s/)
+              fixed_word.split(/\s/).each do |element|
                 if element == alphabet_search && suggestables.include?(element)
-                  suggested << [word, "一部"]
+                  suggested << [fixed_word, "一部"]
                 end
               end
             end
           end
-        elsif agree == 1
-          if word =~ /#{alphabet_search}/
-            matched << data
-          end
-          if match = mana.match(/([^a-z\s\[\]\/]+)/)
-            if match[1] =~ /#{hangeul_search}/
-              matched << data
-            end
+        end
+        mana_index.each do |mana, words|
+          if mana == hangeul_search
+            matched += words
           end
         end
-      elsif type == 1
-        if agree == 0
-          meaning.each_line do |line|
-            if line.gsub(/［(.+)］/, "").gsub(/<(.+)>/, "").split("、").map{|s| s.strip}.any?{|s| s == search}
-              matched << data
-            end
-          end
-        elsif agree == 1
-          meaning.each_line do |line|
-            if line.gsub(/［(.+)］/, "").gsub(/<(.+)>/, "").split("、").map{|s| s.strip}.any?{|s| s =~ /#{search}/}
-              matched << data
-            end
+      else agree == 1
+        word_index.each do |word|
+          fixed_word = word.gsub(/\s*\(\d+\)/, "")
+          if fixed_word =~ /#{alphabet_search}/
+            matched << word
           end
         end
-      elsif type == 3
+        mana_index.each do |mana, words|
+          if mana =~ /#{hangeul_search}/
+            matched += words
+          end
+        end
+      end
+    elsif type == 1
+      if agree == 0
+        meaning_index.each do |meaning, words|
+          if meaning == search
+            matched += words
+          end
+        end
+      elsif agree == 1
+        meaning_index.each do |meaning, words|
+          if meaning =~ /#{search}/
+            matched += words
+          end
+        end
+      end
+    elsif type == 2
+      dictionary.each do |data|
         if data.join("\n") =~ /#{search}/
-          matched << data
+          matched << data[0]
         end
       end
     end
-    matched = matched.uniq.sort
+    matched = matched.uniq.sort.map do |word|
+      next catch(:exit) do
+        dictionary.each do |data|
+          if data[0] == word
+            throw(:exit, data)
+          end
+        end
+      end
+    end
     suggested = suggested.uniq.sort
     return [matched, suggested]
   end
