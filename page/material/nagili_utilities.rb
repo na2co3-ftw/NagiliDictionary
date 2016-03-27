@@ -242,6 +242,18 @@ module NagiliUtilities;extend self
     return index
   end
 
+  def mana_index
+    index = {}
+    File.open("nagili/mana.txt") do |file|
+      file.each_line do |line|
+        if match = line.match(/^(.+?)\s*:\s*(.+)$/)
+          index[match[1]] = match[2].split(/\s*,\s*/)
+        end
+      end
+    end
+    return index
+  end
+
   def requests_data
     return File.read("nagili/request.txt").split(/\r*\n/).reject{|s| s.match(/^\s*$/)}
   end
@@ -508,12 +520,14 @@ module NagiliUtilities;extend self
     dictionary = self.fixed_dictionary_data
     word_index = []
     meaning_index = Hash.new{|h, k| h[k] = []}
+    mana_index = Hash.new{|h, k| h[k] = []}
     suggestable_index = []
     word_output = ""
     meaning_output = ""
+    mana_output = ""
     suggestable_output = ""
     dictionary.each do |data|
-      word, meaning, _ = data
+      word, meaning, _, _, mana, _ = data
       word_index << word
       if !word.match(/\s/) && SUGGESTABLE_CLASSES.any?{|s| meaning.include?(s)}
         suggestable_index << word.gsub(/\(\d+\)/, "")
@@ -523,10 +537,16 @@ module NagiliUtilities;extend self
           meaning_index[each_meaning.strip] << word
         end
       end
+      if match = mana.match(/([^a-z\s\[\]\/]+)/)
+        mana_index[match[1].strip] << word
+      end
     end
     word_output << word_index.join("\n")
     meaning_index.each do |each_meaning, words|
       meaning_output << "#{each_meaning}: #{words.join(", ")}\n"
+    end
+    mana_index.each do |each_mana, words|
+      mana_output << "#{each_mana}: #{words.join(", ")}\n"
     end
     suggestable_output << suggestable_index.join("\n")
     File.open("nagili/word.txt", "w") do |file|
@@ -534,6 +554,9 @@ module NagiliUtilities;extend self
     end
     File.open("nagili/meaning.txt", "w") do |file|
       file.puts(meaning_output)
+    end
+    File.open("nagili/mana.txt", "w") do |file|
+      file.puts(mana_output)
     end
     File.open("nagili/suggestable.txt", "w") do |file|
       file.puts(suggestable_output)
