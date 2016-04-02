@@ -149,6 +149,7 @@ class NagiliDictionary;include NagiliUtilities
   end
 
   def request
+    password = @cgi["password"]
     requests = @cgi["requests"]
     html = ""
     number = NagiliUtilities.add_requests(requests.split("\n"))
@@ -157,7 +158,7 @@ class NagiliDictionary;include NagiliUtilities
     html << "ご協力ありがとうございます。<br>\n"
     html << "</div>\n"
     print_html_header
-    print_header
+    print_header("", 0, 0, 0, "", 0, true, password)
     print(html)
     print_footer
   end
@@ -214,7 +215,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "</div>\n"
     end
     print_html_header
-    print_header
+    print_header("", 0, 0, 0, "", 0, true, password)
     print(html)
     print_footer
   end
@@ -322,7 +323,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "</div>\n"
     end
     print_html_header
-    print_header
+    print_header("", 0, 0, 0, "", 0, true, password)
     print(html)
     print_footer
   end
@@ -347,7 +348,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "</div>\n"
     end
     print_html_header
-    print_header
+    print_header("", 0, 0, 0, "", 0, true, password)
     print(html)
     print_footer
   end
