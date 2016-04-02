@@ -470,6 +470,7 @@ class NagiliDictionary;include NagiliUtilities
     html << "<a class=\"title\" href=\"nagili.cgi\">\n"
     html << "<img src=\"material/top.png\">"
     html << "</a>\n"
+    html << "<div class=\"version\">git: #{NagiliUtilities.version}</div>"
     html << "\n"
     html << "<div class=\"search\">\n"
     html << "<form action=\"nagili.cgi\" name=\"search_form\">\n"

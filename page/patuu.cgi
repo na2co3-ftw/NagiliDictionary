@@ -554,7 +554,7 @@ class PatuuPanwan
   def check_version(user_name, tweet_id)
     @output << "＊ CHECK VERSION\n"
     @output << "from: (#{user_name}, #{tweet_id})\n"
-    content = "@#{user_name} バージョン＝#{}です。" + self.addition
+    content = "@#{user_name} バージョン＝#{NagiliUtilities.version}です。" + self.addition
     result = @patuu.reply(content, tweet_id)
     output_final_result(result)   
   end
