@@ -159,19 +159,20 @@ class NagiliDictionary;include NagiliUtilities
   end
 
   def control
+    password = @cgi["password"]
     html = ""
     requests = NagiliUtilities.requests_data
-    if @cgi["password"] == NagiliUtilities.password
+    if password == NagiliUtilities.password
       html << "<div class=\"suggest\">\n"
       html << "<form action=\"nagili.cgi\" method=\"post\" enctype=\"multipart/form-data\">\n"
       html << "<input type=\"file\" name=\"file\">&nbsp;&nbsp;<input type=\"submit\" value=\"更新\"></input>\n"
       html << "<input type=\"hidden\" name=\"mode\" value=\"update\"></input>\n"
-      html << "<input type=\"hidden\" name=\"password\" value=\"zkgburpdvq\"></input>\n"
+      html << "<input type=\"hidden\" name=\"password\" value=\"#{password}\"></input>\n"
       html << "</form>\n"
       html << "</div>\n"
       html << "<div class=\"suggest\">\n"
       html << "<form action=\"nagili.cgi\" method=\"post\">\n"
-      html << "<input type=\"hidden\" name=\"mode\" value=\"delete\"></input><input type=\"hidden\" name=\"password\" value=\"zkgburpdvq\"></input>\n"
+      html << "<input type=\"hidden\" name=\"mode\" value=\"delete\"></input><input type=\"hidden\" name=\"password\" value=\"#{password}\"></input>\n"
       html << "<input type=\"submit\" value=\"選択項目を削除\"></input>\n"
       (0..(requests.size / 100)).each do |i|
         sliced_requests = requests[i * 100, 100]
@@ -213,8 +214,9 @@ class NagiliDictionary;include NagiliUtilities
   end
 
   def delete
+    password = @cgi["password"]
     html = ""
-    if @cgi["password"] == NagiliUtilities.password
+    if password == NagiliUtilities.password
       delete_data = @cgi.params["delete"]
       deletes = delete_data.map do |data|
         fixed_data = data.split(",", 2)
@@ -232,7 +234,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "<form action=\"nagili.cgi\">\n"
       html << "<input type=\"submit\" value=\"戻る\"></input>\n"
       html << "<input type=\"hidden\" name=\"mode\" value=\"control\"></input>\n"
-      html << "<input type=\"hidden\" name=\"password\" value=\"zkgburpdvq\"></input>\n"
+      html << "<input type=\"hidden\" name=\"password\" value=\"#{password}\"></input>\n"
       html << "</form>\n"
       html << "</div>\n"
     else
@@ -247,8 +249,9 @@ class NagiliDictionary;include NagiliUtilities
   end
 
   def update
+    password = @cgi.params["password"][0].read
     html = ""
-    if @cgi.params["password"][0].read == NagiliUtilities.password
+    if password == NagiliUtilities.password
       file = @cgi.params["file"][0].read
       size = NagiliUtilities.save_dictionary_data(file)
       html << "<div class=\"suggest\">\n"
@@ -256,7 +259,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "<form action=\"nagili.cgi\">\n"
       html << "<input type=\"submit\" value=\"戻る\"></input>\n"
       html << "<input type=\"hidden\" name=\"mode\" value=\"control\"></input>\n"
-      html << "<input type=\"hidden\" name=\"password\" value=\"zkgburpdvq\"></input>\n"
+      html << "<input type=\"hidden\" name=\"password\" value=\"#{password}\"></input>\n"
       html << "</form>\n"
       html << "</div>\n"
     else
