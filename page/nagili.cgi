@@ -30,6 +30,8 @@ class NagiliDictionary;include NagiliUtilities
         request
       when "control"
         control
+      when "edit"
+        edit
       when "delete"
         delete
       when "update"
@@ -196,6 +198,79 @@ class NagiliDictionary;include NagiliUtilities
         html << "</table>\n"
         html << "<input type=\"submit\" value=\"選択項目を削除\"></input>\n"
       end
+      html << "</div>\n"
+    else
+      html << "<div class=\"suggest\">\n"
+      html << "パスワードが違います。<br>\n"
+      html << "</div>\n"
+    end
+    print_html_header
+    print_header
+    print(html)
+    print_footer
+  end
+
+  def edit
+    password = @cgi["password"]
+    type = @cgi["type"]
+    word = @cgi["word"] || ""
+    meaning = @cgi["meaning"] || ""
+    synonym = @cgi["synonym"] || ""
+    ethymology = @cgi["ethymology"] || ""
+    mana = @cgi["mana"] || ""
+    usage = @cgi["usage"] || ""
+    example = @cgi["example"] || ""
+    html = ""
+    log = ""
+    if password == NagiliUtilities.password
+      case type
+      when "load"
+        data = NagiliUtilities.search_word_strictly(word)
+        if data.empty?
+          log << "指定した単語は存在しません。\n"
+          meaning, synonym, ethymology, mana, usage, example = "", "", "", "", "", ""
+        else
+          type = "save"
+          _, meaning, synonym, ethymology, mana, usage, example = data[0]
+        end
+      when "save"
+        result = NagiliUtilities.modify_fixed_dictionary_data(word, meaning, synonym, ethymology, mana, usage, example)
+        if result
+          log << "単語データ #{word} を保存しました。\n"
+        else
+          log << "単語データ #{word} は存在しません。\n"
+        end
+        type = "load"
+        meaning, synonym, ethymology, mana, usage, example = "", "", "", "", "", ""
+      when "delete"
+        result = NagiliUtilities.delete_dictionary_data(word)
+        if result
+          log << "単語データ #{word} を削除しました。\n"
+        else
+          log << "単語データ #{word} が存在しません。\n"
+        end
+        type = "load"
+        meaning, synonym, ethymology, mana, usage, example = "", "", "", "", "", ""
+      end
+      html << "<div class=\"suggest\">\n"
+      html << "<form action=\"nagili.cgi\" method=\"post\">\n"
+      html << "<table>\n"
+      html << "<tr><td>単語:</td><td><input type=\"text\" name=\"word\" value=\"#{word.html_escape}\" size=\"40\"></input></td></tr>\n"
+      html << "<tr><td>訳語:</td><td><textarea name=\"meaning\" cols=\"80\" rows=\"3\">#{meaning.html_escape}</textarea></td></tr>\n"
+      html << "<tr><td>関連語:</td><td><textarea name=\"synonym\" cols=\"80\" rows=\"2\">#{synonym.html_escape}</textarea></td></tr>\n"
+      html << "<tr><td>語源:</td><td><input type=\"text\" name=\"ethymology\" value=\"#{ethymology.html_escape}\" size=\"50\"></input></td></tr>\n"
+      html << "<tr><td>京極:</td><td><input type=\"text\" name=\"mana\" value=\"#{mana.html_escape}\" size=\"50\"></input></td></tr>\n"
+      html << "<tr><td>語法:</td><td><textarea name=\"usage\" cols=\"80\" rows=\"6\">#{usage.html_escape}</textarea></td></tr>\n"
+      html << "<tr><td>用例:</td><td><textarea name=\"example\" cols=\"80\" rows=\"3\">#{example.html_escape}</textarea></td></tr>\n"
+      html << "</table>\n"
+      html << "<input type=\"radio\" name=\"type\" value=\"load\"#{(type == "load") ? " checked" : ""}></input>読込　<input type=\"radio\" name=\"type\" value=\"save\"#{(type == "save") ? " checked" : ""}></input>保存　<input type=\"radio\" name=\"type\" value=\"delete\"#{(type == "delete") ? " checked" : ""}></input>削除　<input type=\"submit\" value=\"実行\"></input>\n"
+      html << "<input type=\"hidden\" name=\"mode\" value=\"edit\"></input><input type=\"hidden\" name=\"password\" value=\"#{password}\"></input>\n"
+      html << "</table>\n"
+      html << "</form>\n"
+      html << "</div>\n"
+      html << "\n"
+      html << "<div class=\"suggest\">\n"
+      html << log
       html << "</div>\n"
     else
       html << "<div class=\"suggest\">\n"

@@ -94,7 +94,8 @@ div.main div.menu form.request {
     margin:                15px 0px 15px 0px;
 }
 
-div.main div.menu form input[type="text"] {
+div.main div.menu form input[type="text"],
+div.main div.content div.suggest form input[type="text"] {
     margin:                0px 0px 5px 0px;
     padding:               2px 4px;
     color:                 #051A1A;
@@ -120,7 +121,9 @@ div.main div.content div.suggest form input[type="submit"] {
 }
 
 div.main div.menu form input[type="radio"],
-div.main div.menu form input[type="checkbox"] {
+div.main div.menu form input[type="checkbox"],
+div.main div.content div.suggest form input[type="radio"],
+div.main div.content div.suggest form input[type="checkbox"] {
     margin:                0px 3px 0px 0px;
 }
 
@@ -135,6 +138,20 @@ div.main div.menu form div.margin {
 
 div.main div.content div.suggest form {
     margin:                5px 0px 0px 0px;
+}
+
+div.main div.content div.suggest form table {
+    margin:                0px auto;
+    padding:               0px;
+    border-collapse:       collapse;
+}
+
+div.main div.content div.suggest form table tr td {
+    margin:                0px;
+    padding:               0px 0px 0px 5px;
+    font-size:             16px;
+    line-height:           20px;
+    text-align:            left;
 }
 
 div.main div.content div.suggest form table.request {
