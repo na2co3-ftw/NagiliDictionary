@@ -15,7 +15,7 @@ require 'material/twitter'
 
 class PatuuPanwan
 
-  ADMINISTERS = ["Ziphil", "ayukawamay", "na2co3_ftw", "Faras_Tilasos", "palfem_kleet", "sashimiwiki"] 
+  ADMINISTERS = [338352248, 4047551593, 126187393, 245768509, 219195704, 222024788]
   MAX_REACTIONS = 10
   MAX_DICTIONARY_BACKUPS = 15
   MAX_PATUU_LOGS = 30
@@ -78,7 +78,7 @@ class PatuuPanwan
         reply.gsub!("&amp;", "&")
         reply.gsub!("&lt;", "<")
         reply.gsub!("&gt;", ">")
-        reply_user_name = data["user"]["screen_name"]
+        reply_user_name = data["user"]["id"]
         reply_tweet_id = data["in_reply_to_status_id"]
         queue_id = nil
         if self.awake?
