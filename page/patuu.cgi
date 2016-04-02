@@ -173,22 +173,22 @@ class PatuuPanwan
               if match = reply.match(/「(.+)」/u)
                 fixed_reply = reply.gsub(/「(.+)」/, "")
                 if fixed_reply.include?("訳語")
-                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :meaning)
+                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :meaning)
                 elsif fixed_reply.include?("関連語")
-                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :synonym)
+                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :synonym)
                 elsif fixed_reply.include?("語源")
-                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :ethymology)
+                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :ethymology)
                 elsif fixed_reply.include?("京極")
-                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :mana)
+                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :mana)
                 elsif fixed_reply.include?("語法")
-                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :usage)
+                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :usage)
                 elsif fixed_reply.include?("用例")
-                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :example)
+                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :example)
                 else 
-                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], nil)
+                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], nil)
                 end
               else
-                modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, nil, nil)
+                modify_word_preparation(reply_user_name, reply_user_id, tweet_id, nil, nil)
               end
             elsif reply.include?("造語")
               if match = reply.match(/「(.+)」/u)
@@ -349,7 +349,7 @@ class PatuuPanwan
     output_final_result(result)
   end
 
-  def modify_word_preparaion(user_name, user_id, tweet_id, word, type)
+  def modify_word_preparation(user_name, user_id, tweet_id, word, type)
     @output << "＊ MODIFY WORD PREPARATION\n"
     @output << "from: (#{user_name}, #{tweet_id}, #{word}, #{type})\n"
     if ADMINISTERS.include?(user_id)
