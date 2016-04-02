@@ -272,7 +272,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "<tr><td>語法:</td><td><textarea name=\"usage\" cols=\"80\" rows=\"6\">#{usage.html_escape}</textarea></td></tr>\n"
       html << "<tr><td>用例:</td><td><textarea name=\"example\" cols=\"80\" rows=\"3\">#{example.html_escape}</textarea></td></tr>\n"
       html << "</table>\n"
-      html << "<input type=\"radio\" name=\"type\" value=\"load\"#{(type == "load") ? " checked" : ""}></input>読込　<input type=\"radio\" name=\"type\" value=\"save\"#{(type == "save") ? " checked" : ""}></input>保存　<input type=\"radio\" name=\"type\" value=\"delete\"#{(type == "delete") ? " checked" : ""}></input>削除　<input type=\"submit\" value=\"実行\"></input>\n"
+      html << "<input type=\"radio\" name=\"type\" value=\"load\"#{(type == "load" || type == "") ? " checked" : ""}></input>読込　<input type=\"radio\" name=\"type\" value=\"save\"#{(type == "save") ? " checked" : ""}></input>保存　<input type=\"radio\" name=\"type\" value=\"delete\"#{(type == "delete") ? " checked" : ""}></input>削除　<input type=\"submit\" value=\"実行\"></input>\n"
       html << "<input type=\"hidden\" name=\"mode\" value=\"edit\"></input><input type=\"hidden\" name=\"password\" value=\"#{password}\"></input>\n"
       html << "</table>\n"
       html << "</form>\n"
