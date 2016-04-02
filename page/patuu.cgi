@@ -78,7 +78,8 @@ class PatuuPanwan
         reply.gsub!("&amp;", "&")
         reply.gsub!("&lt;", "<")
         reply.gsub!("&gt;", ">")
-        reply_user_name = data["user"]["id"]
+        reply_user_name = data["user"]["screen_name"]
+        reply_user_id = data["user"]["id"]
         reply_tweet_id = data["in_reply_to_status_id"]
         queue_id = nil
         if self.awake?
@@ -163,7 +164,7 @@ class PatuuPanwan
             elsif reply.include?("削除") && reply.include?("依頼")
               match = reply.match(/「(.+)」/u)
               requests = (match) ? match[1] : nil
-              delete_requests(reply_user_name, tweet_id, requests)
+              delete_requests(reply_user_name, reply_user_id, tweet_id, requests)
             elsif reply.include?("依頼")
               match = reply.match(/「(.+)」/u)
               requests = (match) ? match[1] : nil
@@ -172,34 +173,34 @@ class PatuuPanwan
               if match = reply.match(/「(.+)」/u)
                 fixed_reply = reply.gsub(/「(.+)」/, "")
                 if fixed_reply.include?("訳語")
-                  modify_word_preparaion(reply_user_name, tweet_id, match[1], :meaning)
+                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :meaning)
                 elsif fixed_reply.include?("関連語")
-                  modify_word_preparaion(reply_user_name, tweet_id, match[1], :synonym)
+                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :synonym)
                 elsif fixed_reply.include?("語源")
-                  modify_word_preparaion(reply_user_name, tweet_id, match[1], :ethymology)
+                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :ethymology)
                 elsif fixed_reply.include?("京極")
-                  modify_word_preparaion(reply_user_name, tweet_id, match[1], :mana)
+                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :mana)
                 elsif fixed_reply.include?("語法")
-                  modify_word_preparaion(reply_user_name, tweet_id, match[1], :usage)
+                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :usage)
                 elsif fixed_reply.include?("用例")
-                  modify_word_preparaion(reply_user_name, tweet_id, match[1], :example)
+                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], :example)
                 else 
-                  modify_word_preparaion(reply_user_name, tweet_id, match[1], nil)
+                  modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, match[1], nil)
                 end
               else
-                modify_word_preparaion(reply_user_name, tweet_id, nil, nil)
+                modify_word_preparaion(reply_user_name, reply_user_id, tweet_id, nil, nil)
               end
             elsif reply.include?("造語")
               if match = reply.match(/「(.+)」/u)
-                create_word_preparation(reply_user_name, tweet_id, match[1])
+                create_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1])
               else
-                create_word_preparation(reply_user_name, tweet_id, nil)
+                create_word_preparation(reply_user_name, reply_user_id, tweet_id, nil)
               end
             elsif reply.include?("削除")
               if match = reply.match(/「(.+)」/u)
-                delete_word(reply_user_name, tweet_id, match[1])
+                delete_word(reply_user_name, reply_user_id, tweet_id, match[1])
               else
-                delete_word(reply_user_name, tweet_id, nil)
+                delete_word(reply_user_name, reply_user_id, tweet_id, nil)
               end              
             elsif reply.include?("単語数")
               check_word_number(reply_user_name, tweet_id)
@@ -208,7 +209,7 @@ class PatuuPanwan
             elsif reply.include?("バージョン")
               check_version(reply_user_name, tweet_id)
             elsif reply.include?("緊急停止")
-              force_halt(reply_user_name, tweet_id)
+              force_halt(reply_user_name, reply_user_id, tweet_id)
             elsif reply.include?("できること") ||
                   (reply.include?("できる") && ["?", "？"].any?{|s| reply.include?(s)} && ["何", "なに", "どう", "どんな"].any?{|s| reply.include?(s)})
               help(reply_user_name, tweet_id)
@@ -331,10 +332,10 @@ class PatuuPanwan
     output_final_result(result)
   end
 
-  def delete_requests(user_name, tweet_id, requests)
+  def delete_requests(user_name, user_id, tweet_id, requests)
     @output << "＊ DELETE REQUESTS\n"
     @output << "from: (#{user_name}, #{tweet_id}, #{requests})\n"
-    if ADMINISTERS.include?(user_name)
+    if ADMINISTERS.include?(user_id)
       if requests
         content = "@#{user_name} 削除しました。" + self.addition
         NagiliUtilities.delete_requests_loosely(requests.split(/(?:\s*\\\s*|\s*¥\s*)/))
@@ -348,10 +349,10 @@ class PatuuPanwan
     output_final_result(result)
   end
 
-  def modify_word_preparaion(user_name, tweet_id, word, type)
+  def modify_word_preparaion(user_name, user_id, tweet_id, word, type)
     @output << "＊ MODIFY WORD PREPARATION\n"
     @output << "from: (#{user_name}, #{tweet_id}, #{word}, #{type})\n"
-    if ADMINISTERS.include?(user_name)
+    if ADMINISTERS.include?(user_id)
       if word
         matched = (word.match(/^[a-z0-9\(\)]+$/)) ? NagiliUtilities.search_word_strictly(word) : NagiliUtilities.search_word(word, 0, 5)[0]
         unless matched.empty?
@@ -428,10 +429,10 @@ class PatuuPanwan
     output_final_result(result)   
   end
 
-  def create_word_preparation(user_name, tweet_id, word)
+  def create_word_preparation(user_name, user_id, tweet_id, word)
     @output << "＊ CREATE WORD PREPARATION\n"
     @output << "from: (#{user_name}, #{tweet_id}, #{word})\n"
-    if ADMINISTERS.include?(user_name)
+    if ADMINISTERS.include?(user_id)
       if word
         if NagiliUtilities.search_word_strictly(word).empty?
           content = "@#{user_name} 訳語以下の部分を書いてください。" + self.addition
@@ -479,10 +480,10 @@ class PatuuPanwan
     output_final_result(result)  
   end
 
-  def delete_word(user_name, tweet_id, word)
+  def delete_word(user_name, user_id, tweet_id, word)
     @output << "＊ DELETE WORD\n"
     @output << "from: (#{user_name}, #{tweet_id}, #{word})\n"    
-    if ADMINISTERS.include?(user_name)
+    if ADMINISTERS.include?(user_id)
       if word
         unless NagiliUtilities.search_word_strictly(word).empty?
           NagiliUtilities.delete_dictionary_data(word)
@@ -578,10 +579,10 @@ class PatuuPanwan
     output_final_result(result) 
   end
 
-  def force_halt(user_name, tweet_id)
+  def force_halt(user_name, user_id, tweet_id)
     @output << "＊ FORCE HALT\n"
     @output << "from: (#{user_name}, #{tweet_id})\n"
-    if ADMINISTERS.include?(user_name)
+    if ADMINISTERS.include?(user_id)
       @output << "done\n\n"
       File.open("nagili/heart.txt", "w") do |file|
         file.print("dead")
