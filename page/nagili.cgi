@@ -196,11 +196,6 @@ class NagiliDictionary;include NagiliUtilities
         html << "</table>\n"
         html << "<input type=\"submit\" value=\"選択項目を削除\"></input>\n"
       end
-      # requests.each_with_index do |request, i|
-      #   html << "<li><input type=\"checkbox\" name=\"delete\" value=\"#{i},#{request.html_escape}\"></input>#{request.html_escape}</li>\n"
-      # end
-      # html << "</table>\n"
-      # html << "<input type=\"submit\" value=\"選択項目を削除\"></input>\n"
       html << "</div>\n"
     else
       html << "<div class=\"suggest\">\n"
