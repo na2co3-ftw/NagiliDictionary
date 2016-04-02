@@ -102,13 +102,13 @@ class NagiliDictionary;include NagiliUtilities
     password = (password == NagiliUtilities.password) ? password : nil
     if submit
       matched[page * 30, 30].each do |data|
-        html << NagiliDictionary.result_html_word(data[0], data[1], data[2], data[3], data[4], data[5], data[6], password)
+        html << NagiliDictionary.result_html_word(password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
       end
     else
       matched[page * 30, 30].each do |mana, words, double_words, nagili_data|
         html << NagiliDictionary.result_html_mana(mana, words, double_words)
         nagili_data.each do |data|
-          html << NagiliDictionary.result_html_word(data[0], data[1], data[2], data[3], data[4], data[5], data[6], password)
+          html << NagiliDictionary.result_html_word(password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
         end
       end
     end
@@ -143,7 +143,7 @@ class NagiliDictionary;include NagiliUtilities
     html << "#{right}\n"
     html << "</div>\n\n"
     print_html_header
-    print_header(search, type, agree, random, search_mana, type_mana, submit, password)
+    print_header(password, search, type, agree, random, search_mana, type_mana, submit)
     print(html)
     print_footer
   end
@@ -158,7 +158,7 @@ class NagiliDictionary;include NagiliUtilities
     html << "ご協力ありがとうございます。<br>\n"
     html << "</div>\n"
     print_html_header
-    print_header("", 0, 0, 0, "", 0, true, password)
+    print_header(password)
     print(html)
     print_footer
   end
@@ -215,7 +215,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "</div>\n"
     end
     print_html_header
-    print_header("", 0, 0, 0, "", 0, true, password)
+    print_header(password)
     print(html)
     print_footer
   end
@@ -288,7 +288,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "</div>\n"
     end
     print_html_header
-    print_header("", 0, 0, 0, "", 0, true, password)
+    print_header(password)
     print(html)
     print_footer
   end
@@ -323,7 +323,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "</div>\n"
     end
     print_html_header
-    print_header("", 0, 0, 0, "", 0, true, password)
+    print_header(password)
     print(html)
     print_footer
   end
@@ -348,7 +348,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "</div>\n"
     end
     print_html_header
-    print_header("", 0, 0, 0, "", 0, true, password)
+    print_header(password)
     print(html)
     print_footer
   end
@@ -533,7 +533,7 @@ class NagiliDictionary;include NagiliUtilities
     end
   end
 
-  def print_header(search = "", type = 0, agree = 0, random = 0, search_mana = "", type_mana = 0, submit = true, password = "")
+  def print_header(password = "", search = "", type = 0, agree = 0, random = 0, search_mana = "", type_mana = 0, submit = true)
     html = ""
     html << "<!DOCTYPE html>\n"
     html << "<html lang=\"ja\">\n"
@@ -630,7 +630,7 @@ class NagiliDictionary;include NagiliUtilities
     print(html)
   end
 
-  def self.result_html_word(word, meaning, synonym, ethymology, mana, usage, example, password = nil)
+  def self.result_html_word(password, word, meaning, synonym, ethymology, mana, usage, example)
     html = ""
     html << "<div class=\"word\">\n"
     old_word = word.clone
