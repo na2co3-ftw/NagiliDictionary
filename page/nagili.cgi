@@ -72,6 +72,7 @@ class NagiliDictionary;include NagiliUtilities
   end
 
   def search
+    password = @cgi["password"]
     type = @cgi["type"].to_i
     type_mana = @cgi["type_mana"].to_i
     agree = @cgi["agree"].to_i
@@ -98,15 +99,16 @@ class NagiliDictionary;include NagiliUtilities
       html << " の#{suggest_type}?<br>\n"
     end
     html << "</div>\n\n" unless suggested.empty?
+    password = (password == NagiliUtilities.password) ? password : nil
     if submit
       matched[page * 30, 30].each do |data|
-        html << NagiliDictionary.result_html_word(*data)
+        html << NagiliDictionary.result_html_word(data[0], data[1], data[2], data[3], data[4], data[5], data[6], password)
       end
     else
       matched[page * 30, 30].each do |mana, words, double_words, nagili_data|
         html << NagiliDictionary.result_html_mana(mana, words, double_words)
         nagili_data.each do |data|
-          html << NagiliDictionary.result_html_word(*data)
+          html << NagiliDictionary.result_html_word(data[0], data[1], data[2], data[3], data[4], data[5], data[6], password)
         end
       end
     end
@@ -141,7 +143,7 @@ class NagiliDictionary;include NagiliUtilities
     html << "#{right}\n"
     html << "</div>\n\n"
     print_html_header
-    print_header(search, type, agree, random, search_mana, type_mana, submit)
+    print_header(search, type, agree, random, search_mana, type_mana, submit, password)
     print(html)
     print_footer
   end
@@ -278,7 +280,7 @@ class NagiliDictionary;include NagiliUtilities
       html << "</div>\n"
     end
     print_html_header
-    print_header
+    print_header("", 0, 0, 0, "", 0, true, password)
     print(html)
     print_footer
   end
@@ -523,7 +525,7 @@ class NagiliDictionary;include NagiliUtilities
     end
   end
 
-  def print_header(search = "", type = 0, agree = 0, random = 0, search_mana = "", type_mana = 0, submit = true)
+  def print_header(search = "", type = 0, agree = 0, random = 0, search_mana = "", type_mana = 0, submit = true, password = "")
     html = ""
     html << "<!DOCTYPE html>\n"
     html << "<html lang=\"ja\">\n"
@@ -551,7 +553,7 @@ class NagiliDictionary;include NagiliUtilities
     html << "<input type=\"radio\" name=\"type\" value=\"0\"#{(type == 0) ? " checked" : ""}></input>単語　<input type=\"radio\" name=\"type\" value=\"1\"#{(type == 1) ? " checked" : ""}></input>訳語　<input type=\"radio\" name=\"type\" value=\"3\"#{(type == 3) ? " checked" : ""}></input>全文<br>\n"
     html << "<input type=\"radio\" name=\"agree\" value=\"0\"#{(agree == 0) ? " checked" : ""}></input>完全一致　<input type=\"radio\" name=\"agree\" value=\"1\"#{(agree == 1) ? " checked" : ""}></input>部分一致<br>\n"
     html << "<input type=\"checkbox\" name=\"random\" class=\"random\" value=\"1\"#{(random == 1) ? " checked" : ""}></input>ランダム表示<br>\n"
-    html << "<input type=\"hidden\" name=\"mode\" value=\"search\"></input>\n"
+    html << "<input type=\"hidden\" name=\"mode\" value=\"search\"></input><input type=\"hidden\" name=\"password\" value=\"#{password}\"></input>\n"
     html << "<div class=\"margin\"></div>\n"
     html << "<span class=\"small\">京極:</span> <input type=\"text\" name=\"search_mana\" value=\"#{search_mana.html_escape}\"></input>&nbsp;&nbsp;<input type=\"submit\" name=\"submit_mana\" value=\"検索\"></input><br>\n"
     html << "<input type=\"radio\" name=\"type_mana\" value=\"0\"#{(type_mana == 0) ? " checked" : ""}></input>京極　<input type=\"radio\" name=\"type_mana\" value=\"1\"#{(type_mana == 1) ? " checked" : ""}></input>読み<br>\n"
@@ -620,9 +622,10 @@ class NagiliDictionary;include NagiliUtilities
     print(html)
   end
 
-  def self.result_html_word(word, meaning, synonym, ethymology, mana, usage, example)
+  def self.result_html_word(word, meaning, synonym, ethymology, mana, usage, example, password = nil)
     html = ""
     html << "<div class=\"word\">\n"
+    old_word = word.clone
     word = word.gsub(/\(\d+\)/, "").strip
     if match = mana.match(/([a-z\s\[\]\/]*)\s*([^a-z\s\[\]\/]*)/)
       html << "<h1><table>\n"
@@ -680,6 +683,11 @@ class NagiliDictionary;include NagiliUtilities
         next sentence.split(" ").map{|s| self.word_link_html(s).gsub("\">", "\" class=\"example\">")}.join(" ") + punctuation
       end
       html << "<div class=\"usage\">\n" + example + "</div>\n"
+    end
+    if password
+      html << "<div class=\"usage\">\n"
+      html << "<a href=\"nagili.cgi?mode=edit&type=load&word=#{old_word.html_escape}&password=#{password.html_escape}\">編集</a>\n"
+      html << "</div>\n"
     end
     html << "</div>\n\n"
     return html
