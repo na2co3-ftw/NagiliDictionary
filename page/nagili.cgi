@@ -102,13 +102,13 @@ class NagiliDictionary
     new_password = (password == NagiliUtilities.password) ? password : nil
     if submit
       matched[page * 30, 30].each do |data|
-        html << NagiliSource.result_html_word(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
+        html << NagiliSource.result_word_html(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
       end
     else
       matched[page * 30, 30].each do |mana, words, double_words, nagili_data|
-        html << NagiliSource.result_html_mana(mana, words, double_words)
+        html << NagiliSource.result_mana_html(mana, words, double_words)
         nagili_data.each do |data|
-          html << NagiliSource.result_html_word(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
+          html << NagiliSource.result_word_html(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
         end
       end
     end
@@ -637,7 +637,7 @@ module NagiliSource;include NagiliUtilities;extend self
     return html
   end
 
-  def result_html_word(password, word, meaning, synonym, ethymology, mana, usage, example)
+  def result_word_html(password, word, meaning, synonym, ethymology, mana, usage, example)
     html = ""
     html << "<div class=\"word\">\n"
     old_word = word.clone
@@ -708,7 +708,7 @@ module NagiliSource;include NagiliUtilities;extend self
     return html
   end
 
-  def result_html_mana(mana, words, double_words)
+  def result_mana_html(mana, words, double_words)
     html = ""
     html << "<div class=\"mana-word\">\n"
     html << "<div class=\"left\">\n"
