@@ -33,6 +33,6 @@ function submit_url() {
   }
   url += "search_mana=" + encodeURIComponent($("[name=\"search_mana\"]").val()) + "&";
   url += "type_mana=" + $("[name=\"type_mana\"]:checked").val() + "&";
-  url += "password=" + $("[name=\"password\"]").val() + "&;
+  url += "password=" + $("[name=\"password\"]").val() + "&";
   return url;
 }
