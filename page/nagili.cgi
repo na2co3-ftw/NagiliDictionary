@@ -95,30 +95,30 @@ class NagiliDictionary;include NagiliUtilities
     html << "<div class=\"suggest\">\n" unless suggested.empty?
     suggested.each do |word, suggest_type|
       html << "<span class=\"maybe\">もしかして:</span>"
-      html << NagiliDictionary.word_link_html(word)
+      html << NagiliDictionary.word_link_html(password, word)
       html << " の#{suggest_type}?<br>\n"
     end
     html << "</div>\n\n" unless suggested.empty?
-    password = (password == NagiliUtilities.password) ? password : nil
+    new_password = (password == NagiliUtilities.password) ? password : nil
     if submit
       matched[page * 30, 30].each do |data|
-        html << NagiliDictionary.result_html_word(password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
+        html << NagiliDictionary.result_html_word(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
       end
     else
       matched[page * 30, 30].each do |mana, words, double_words, nagili_data|
         html << NagiliDictionary.result_html_mana(mana, words, double_words)
         nagili_data.each do |data|
-          html << NagiliDictionary.result_html_word(password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
+          html << NagiliDictionary.result_html_word(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
         end
       end
     end
     if page > 0
-      left = NagiliDictionary.word_link_html(search, type, agree, page - 1, "◀")
+      left = NagiliDictionary.word_link_html(password, search, type, agree, page - 1, "◀")
     else
       left = "◀"
     end
     if page * 30 + 30 < number
-      right = NagiliDictionary.word_link_html(search, type, agree, page + 1, "▶")
+      right = NagiliDictionary.word_link_html(password, search, type, agree, page + 1, "▶")
     else
       right = "▶"
     end
@@ -134,7 +134,7 @@ class NagiliDictionary;include NagiliUtilities
         if page == current_page
           html << "<span class=\"number\">#{current_page + 1}</span>"
         else
-          html << NagiliDictionary.word_link_html(search, type, agree, current_page, (current_page + 1).to_s)
+          html << NagiliDictionary.word_link_html(password, search, type, agree, current_page, (current_page + 1).to_s)
         end
       end
     end
@@ -665,7 +665,7 @@ class NagiliDictionary;include NagiliUtilities
     end
     synonym.each_line do |line|
       new_line = line.chomp
-      new_line.gsub!(/((([a-z]\s*)+[、]*)+)/){$1.split("、").map{|s| self.word_link_html(s)}.join("、")}
+      new_line.gsub!(/((([a-z]\s*)+[、]*)+)/){$1.split("、").map{|s| self.word_link_html(password, s)}.join("、")}
       new_line.gsub!(/［(.+)］/){"<span class=\"bracket\">#{$1}</span>"}
       new_line.gsub!("、", "、<wbr>")
       html << "<div class=\"synonym\">" + new_line + "</div>\n"
@@ -688,7 +688,7 @@ class NagiliDictionary;include NagiliUtilities
       example.gsub!(/^(.+)(\.|\!|\?)/) do
         sentence = $1
         punctuation = $2
-        next sentence.split(" ").map{|s| self.word_link_html(s).gsub("\">", "\" class=\"example\">")}.join(" ") + punctuation
+        next sentence.split(" ").map{|s| self.word_link_html(password, s).gsub("\">", "\" class=\"example\">")}.join(" ") + punctuation
       end
       html << "<div class=\"usage\">\n" + example + "</div>\n"
     end
@@ -722,8 +722,8 @@ class NagiliDictionary;include NagiliUtilities
     return html
   end
 
-  def self.word_link_html(word, type = 0, agree = 0, page = 0, text = nil)
-    html = "<a href=\"nagili.cgi?mode=search&search=#{word.url_escape}&type=#{type}&agree=#{agree}&page=#{page}\">"
+  def self.word_link_html(password, word, type = 0, agree = 0, page = 0, text = nil)
+    html = "<a href=\"nagili.cgi?mode=search&search=#{word.url_escape}&type=#{type}&agree=#{agree}&page=#{page}&password=#{password}\">"
     displayed_text = (text) ? text : word
     html << displayed_text
     html << "</a>"
