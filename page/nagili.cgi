@@ -12,7 +12,7 @@ require 'material/nagili_utilities'
 require 'material/twitter'
 
 
-class NagiliDictionary;include NagiliUtilities
+class NagiliDictionary
 
   def initialize(cgi)
     @cgi = cgi
@@ -58,17 +58,17 @@ class NagiliDictionary;include NagiliUtilities
   end
 
   def default
-    print_html_header
-    print_header
-    print_default
-    print_footer
+    print(NagiliSource.html_header)
+    print(NagiliSource.header)
+    print(NagiliSource.default)
+    print(NagiliSource.footer)
   end
 
   def request_default
-    print_html_header
-    print_header
-    print_request_default
-    print_footer
+    print(NagiliSource.html_header)
+    print(NagiliSource.header)
+    print(NagiliSource.request_default)
+    print(NagiliSource.footer)
   end
 
   def search
@@ -95,30 +95,30 @@ class NagiliDictionary;include NagiliUtilities
     html << "<div class=\"suggest\">\n" unless suggested.empty?
     suggested.each do |word, suggest_type|
       html << "<span class=\"maybe\">もしかして:</span>"
-      html << NagiliDictionary.word_link_html(password, word)
+      html << NagiliSource.word_link_html(password, word)
       html << " の#{suggest_type}?<br>\n"
     end
     html << "</div>\n\n" unless suggested.empty?
     new_password = (password == NagiliUtilities.password) ? password : nil
     if submit
       matched[page * 30, 30].each do |data|
-        html << NagiliDictionary.result_html_word(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
+        html << NagiliSource.result_html_word(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
       end
     else
       matched[page * 30, 30].each do |mana, words, double_words, nagili_data|
-        html << NagiliDictionary.result_html_mana(mana, words, double_words)
+        html << NagiliSource.result_html_mana(mana, words, double_words)
         nagili_data.each do |data|
-          html << NagiliDictionary.result_html_word(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
+          html << NagiliSource.result_html_word(new_password, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
         end
       end
     end
     if page > 0
-      left = NagiliDictionary.word_link_html(password, search, type, agree, page - 1, "◀")
+      left = NagiliSource.word_link_html(password, search, type, agree, page - 1, "◀")
     else
       left = "◀"
     end
     if page * 30 + 30 < number
-      right = NagiliDictionary.word_link_html(password, search, type, agree, page + 1, "▶")
+      right = NagiliSource.word_link_html(password, search, type, agree, page + 1, "▶")
     else
       right = "▶"
     end
@@ -134,7 +134,7 @@ class NagiliDictionary;include NagiliUtilities
         if page == current_page
           html << "<span class=\"number\">#{current_page + 1}</span>"
         else
-          html << NagiliDictionary.word_link_html(password, search, type, agree, current_page, (current_page + 1).to_s)
+          html << NagiliSource.word_link_html(password, search, type, agree, current_page, (current_page + 1).to_s)
         end
       end
     end
@@ -142,10 +142,10 @@ class NagiliDictionary;include NagiliUtilities
     html << "<span class=\"number\">#{number / 30 + 1} <span class=\"small\">pages</span></span>　|　<span class=\"number\">#{number} <span class=\"small\">words</span></span></span></span>"
     html << "#{right}\n"
     html << "</div>\n\n"
-    print_html_header
-    print_header(password, search, type, agree, random, search_mana, type_mana, submit)
+    print(NagiliSource.html_header)
+    print(NagiliSource.header(password, search, type, agree, random, search_mana, type_mana, submit))
     print(html)
-    print_footer
+    print(NagiliSource.footer)
   end
 
   def request
@@ -157,10 +157,10 @@ class NagiliDictionary;include NagiliUtilities
     html << "造語依頼 (#{number} 件) が完了しました。<br>\n"
     html << "ご協力ありがとうございます。<br>\n"
     html << "</div>\n"
-    print_html_header
-    print_header(password)
+    print(NagiliSource.html_header)
+    print(NagiliSource.header(password))
     print(html)
-    print_footer
+    print(NagiliSource.footer)
   end
 
   def control
@@ -214,10 +214,10 @@ class NagiliDictionary;include NagiliUtilities
       html << "パスワードが違います。<br>\n"
       html << "</div>\n"
     end
-    print_html_header
-    print_header(password)
+    print(NagiliSource.html_header)
+    print(NagiliSource.header(password))
     print(html)
-    print_footer
+    print(NagiliSource.footer)
   end
 
   def edit
@@ -287,10 +287,10 @@ class NagiliDictionary;include NagiliUtilities
       html << "パスワードが違います。<br>\n"
       html << "</div>\n"
     end
-    print_html_header
-    print_header(password)
+    print(NagiliSource.html_header)
+    print(NagiliSource.header(password))
     print(html)
-    print_footer
+    print(NagiliSource.footer)
   end
 
   def delete
@@ -322,10 +322,10 @@ class NagiliDictionary;include NagiliUtilities
       html << "パスワードが違います。<br>\n"
       html << "</div>\n"
     end
-    print_html_header
-    print_header(password)
+    print(NagiliSource.html_header)
+    print(NagiliSource.header(password))
     print(html)
-    print_footer
+    print(NagiliSource.footer)
   end
 
   def update
@@ -347,16 +347,16 @@ class NagiliDictionary;include NagiliUtilities
       html << "パスワードが違います。<br>\n"
       html << "</div>\n"
     end
-    print_html_header
-    print_header(password)
+    print(NagiliSource.html_header)
+    print(NagiliSource.header(password))
     print(html)
-    print_footer
+    print(NagiliSource.footer)
   end
 
   def create_mana_data(create_only = false)
     NagiliUtilities.create_mana_data
     unless create_only
-      print_html_header(false)
+      print(NagiliSource.html_header(false))
       print("done")
     end
   end
@@ -364,7 +364,7 @@ class NagiliDictionary;include NagiliUtilities
   def create_search_index(create_only = false)
     NagiliUtilities.create_search_index
     unless create_only
-      print_html_header(false)
+      print(NagiliSource.html_header(false))
       print("done")
     end
   end
@@ -376,7 +376,7 @@ class NagiliDictionary;include NagiliUtilities
       file.print(date_string)
     end
     unless create_only
-      print_html_header(false)
+      print(NagiliSource.html_header(false))
       print("done: #{date_string}")
     end
   end
@@ -488,7 +488,7 @@ class NagiliDictionary;include NagiliUtilities
     output << "・0時から1時の間に寝て、7時から8時の間に起きます。寝てから起きるまでの間は特に処理を行いません。\n"
     output << "・辞書データは毎日4時10分にバックアップが取られます。最大15ファイルまで保存します。\n"
     output << "\n"
-    print_html_header(false)
+    print(NagiliSource.html_header(false))
     print(output)
   end
 
@@ -510,7 +510,7 @@ class NagiliDictionary;include NagiliUtilities
       output << "#{mana}: #{words.join(", ")}\n"
     end
     output << "―― その他 ――\n"
-    print_html_header(false)
+    print(NagiliSource.html_header(false))
     print(output)
   end
 
@@ -519,21 +519,28 @@ class NagiliDictionary;include NagiliUtilities
     html << "<div class=\"suggest\">\n"
     html << message.html_escape.gsub("\n", "<br>\n")
     html << "</div>\n"
-    print_html_header
-    print_header
+    print(NagiliSource.html_header)
+    print(NagiliSource.header)
     print(html)
-    print_footer
+    print(NagiliSource.footer)
   end
 
-  def print_html_header(html = true)
-    if html
-      print("Content-Type: text/html\n\n")
+end
+
+
+module NagiliSource;include NagiliUtilities;extend self
+
+  def html_header(type = true)
+    html = ""
+    if type
+      html << "Content-Type: text/html\n\n"
     else
-      print("Content-Type: text/plain; charset=utf-8\n\n")
+      html << "Content-Type: text/plain; charset=utf-8\n\n"
     end
+    return html
   end
 
-  def print_header(password = "", search = "", type = 0, agree = 0, random = 0, search_mana = "", type_mana = 0, submit = true)
+  def header(password = "", search = "", type = 0, agree = 0, random = 0, search_mana = "", type_mana = 0, submit = true)
     html = ""
     html << "<!DOCTYPE html>\n"
     html << "<html lang=\"ja\">\n"
@@ -577,10 +584,10 @@ class NagiliDictionary;include NagiliUtilities
     html << "</div>\n"
     html << "\n"
     html << "<div class=\"content\">\n\n"
-    print(html)
+    return html
   end
 
-  def print_footer
+  def footer
     html = ""
     html << "\n"
     html << "</div>\n"
@@ -589,10 +596,10 @@ class NagiliDictionary;include NagiliUtilities
     html << "\n"
     html << "</body>\n"
     html << "</html>\n"
-    print(html)
+    return html
   end
 
-  def print_default
+  def default
     html = ""
     html << "<div class=\"suggest\">\n"
     html << "<a href=\"https://sites.google.com/site/nagilikuli/home\" target=\"blank\">人工言語凪霧</a>のオンライン辞典です。<br>\n"
@@ -613,10 +620,10 @@ class NagiliDictionary;include NagiliUtilities
     html << "・ソースコード<br>\n"
     html << "凪霧辞典プロジェクト (オンライン凪霧辞典, 凪霧辞典bot, 白雲項) のソースコードは<a href=\"https://github.com/Ziphil/NagiliDictionary\" target=\"blank\">GitHub</a>上で公開されています。"
     html << "</div>\n"
-    print(html)
+    return html
   end
 
-  def print_request_default
+  def request_default
     html = ""
     html << "<div class=\"suggest\">\n"
     html << "こちらのフォームから不足している単語を依頼できます。<br>\n"
@@ -627,10 +634,10 @@ class NagiliDictionary;include NagiliUtilities
     html << "<input type=\"hidden\" name=\"mode\" value=\"request\"></input>\n"
     html << "</form>\n"
     html << "</div>\n"
-    print(html)
+    return html
   end
 
-  def self.result_html_word(password, word, meaning, synonym, ethymology, mana, usage, example)
+  def result_html_word(password, word, meaning, synonym, ethymology, mana, usage, example)
     html = ""
     html << "<div class=\"word\">\n"
     old_word = word.clone
@@ -665,7 +672,7 @@ class NagiliDictionary;include NagiliUtilities
     end
     synonym.each_line do |line|
       new_line = line.chomp
-      new_line.gsub!(/((([a-z]\s*)+[、]*)+)/){$1.split("、").map{|s| self.word_link_html(password, s)}.join("、")}
+      new_line.gsub!(/((([a-z]\s*)+[、]*)+)/){$1.split("、").map{|s| NagiliSource.word_link_html(password, s)}.join("、")}
       new_line.gsub!(/［(.+)］/){"<span class=\"bracket\">#{$1}</span>"}
       new_line.gsub!("、", "、<wbr>")
       html << "<div class=\"synonym\">" + new_line + "</div>\n"
@@ -688,7 +695,7 @@ class NagiliDictionary;include NagiliUtilities
       example.gsub!(/^(.+)(\.|\!|\?)/) do
         sentence = $1
         punctuation = $2
-        next sentence.split(" ").map{|s| self.word_link_html(password, s).gsub("\">", "\" class=\"example\">")}.join(" ") + punctuation
+        next sentence.split(" ").map{|s| NagiliSource.word_link_html(password, s).gsub("\">", "\" class=\"example\">")}.join(" ") + punctuation
       end
       html << "<div class=\"usage\">\n" + example + "</div>\n"
     end
@@ -701,7 +708,7 @@ class NagiliDictionary;include NagiliUtilities
     return html
   end
 
-  def self.result_html_mana(mana, words, double_words)
+  def result_html_mana(mana, words, double_words)
     html = ""
     html << "<div class=\"mana-word\">\n"
     html << "<div class=\"left\">\n"
@@ -722,7 +729,7 @@ class NagiliDictionary;include NagiliUtilities
     return html
   end
 
-  def self.word_link_html(password, word, type = 0, agree = 0, page = 0, text = nil)
+  def word_link_html(password, word, type = 0, agree = 0, page = 0, text = nil)
     html = "<a href=\"nagili.cgi?mode=search&search=#{word.url_escape}&type=#{type}&agree=#{agree}&page=#{page}&password=#{password}\">"
     displayed_text = (text) ? text : word
     html << displayed_text
