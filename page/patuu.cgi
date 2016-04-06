@@ -59,10 +59,7 @@ class PatuuPanwan
   end
 
   def react_mentions
-    last_tweet_id = 0
-    File.open("nagili/last_tweet_id.txt", "r") do |file|
-      last_tweet_id = file.read.to_i
-    end
+    last_tweet_id = File.read("nagili/last_tweet_id.txt", "r").to_i
     mentions = @patuu.mentions
     @output << "last_tweed_id: #{last_tweet_id}\n\n"
     unless mentions.include?("errors")
