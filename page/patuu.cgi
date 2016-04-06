@@ -729,7 +729,7 @@ class PatuuPanwan
     File.open("nagili/heart.txt", "r") do |file|
       @status = file.read
     end
-    @output << "【 PatuuPanwan @ #{time_string} #{@status} 】\n"
+    @output << "【 PatuuPanwan (#{NagiliUtilities.version}) @ #{time_string} #{@status} 】\n"
   end
 
   def error(message)
