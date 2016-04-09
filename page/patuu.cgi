@@ -1,8 +1,6 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-# /usr/bin/ruby C:/Ruby187/bin/ruby.exe
-
 
 $KCODE = "U"
 $:.unshift(File.dirname(__FILE__))
