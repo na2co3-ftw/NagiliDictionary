@@ -2,8 +2,6 @@
 # coding: utf-8
 
 
-$KCODE = "U"
-
 require 'cgi'
 require 'pp'
 require 'material/nagili_utilities'
@@ -737,5 +735,11 @@ module NagiliSource;include NagiliUtilities;extend self
 
 end
 
+
+if RUBY_VERSION >= "1.9.0"
+  Encoding.default_external = "UTF-8"
+else
+  $KCODE = "U"
+end
 
 NagiliDictionary.new(CGI.new).run
