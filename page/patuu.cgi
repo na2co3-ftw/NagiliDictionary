@@ -2,6 +2,9 @@
 # coding: utf-8
 
 
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+Dir.chdir(File.dirname(__FILE__))
+
 require 'pp'
 require 'material/nagili_utilities'
 require 'material/twitter'
@@ -768,7 +771,5 @@ if RUBY_VERSION >= "1.9.0"
 else
   $KCODE = "U"
 end
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-Dir.chdir(File.dirname(__FILE__))
 
 PatuuPanwan.new.run
