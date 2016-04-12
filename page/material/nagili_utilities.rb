@@ -158,46 +158,9 @@ module NagiliUtilities;extend self
   # CSV 形式の辞書データを読み込み、データを種類別に分け直します。
   # 各単語データは、単語, 語義, 関連語, 語源, 京極, 用法, 用例の順に格納された大きさ 7 の配列になります。
   def fixed_dictionary_data
-    dictionary = self.dictionary_data
-    new_dictionary = []
-    dictionary.each do |data|
-      word = data[0]
-      meaning = ""
-      synonym = ""
-      ethymology = ""
-      mana = ""
-      usage = ""
-      example = ""
-      mana_flag = true
-      ethymology_flag = true
-      example_flag = false
-      explanation = data[1] + "\n" + data[2]
-      explanation.each_line do |line|
-        if WORD_CLASSES.any?{|s, _| line.include?(s)}
-          meaning << line
-        elsif WORD_TAGS.any?{|s| line.include?(s)}
-          synonym << line
-        elsif MAIN_TAGS.any?{|s| line.include?(s)}
-          usage << line
-          example_flag = false
-        elsif EXAMPLE_TAGS.any?{|s| line.include?(s)}
-          example << line
-          example_flag = true
-        elsif ethymology_flag && (line.match(/\d+:.+/) || line.match(/^seren/))
-          ethymology << line
-          ethymology_flag = false
-        elsif mana_flag && line.match(/([a-z\s\[\]\/]*)\s*([^a-z\s\[\]\/]*)/)
-          mana << line
-          mana_flag = false
-        elsif example_flag
-          example << line
-        else
-          usage << line
-        end
-      end
-      new_dictionary << [word, meaning, synonym, ethymology, mana, usage, example]
-    end
-    return new_dictionary
+    data = File.read("nagili/fixed_dictionary.csv")
+    dictionary = data.scan(/"(.*?)","(.*?)","(.*?)","(.*?)","(.*?)","(.*?)","(.*?)"\n/m)
+    return dictionary
   end
 
   def single_mana_data
@@ -439,6 +402,51 @@ module NagiliUtilities;extend self
       return self.update_dictionary_data(dictionary)
     else
       return nil
+    end
+  end
+
+  def create_fixed_dictionary_data
+    dictionary = self.dictionary_data
+    output = ""
+    dictionary.each do |data|
+      word = data[0]
+      meaning = ""
+      synonym = ""
+      ethymology = ""
+      mana = ""
+      usage = ""
+      example = ""
+      mana_flag = true
+      ethymology_flag = true
+      example_flag = false
+      explanation = data[1] + "\n" + data[2]
+      explanation.each_line do |line|
+        if WORD_CLASSES.any?{|s, _| line.include?(s)}
+          meaning << line
+        elsif WORD_TAGS.any?{|s| line.include?(s)}
+          synonym << line
+        elsif MAIN_TAGS.any?{|s| line.include?(s)}
+          usage << line
+          example_flag = false
+        elsif EXAMPLE_TAGS.any?{|s| line.include?(s)}
+          example << line
+          example_flag = true
+        elsif ethymology_flag && (line.match(/\d+:.+/) || line.match(/^seren/))
+          ethymology << line
+          ethymology_flag = false
+        elsif mana_flag && line.match(/([a-z\s\[\]\/]*)\s*([^a-z\s\[\]\/]*)/)
+          mana << line
+          mana_flag = false
+        elsif example_flag
+          example << line
+        else
+          usage << line
+        end
+      end
+      output << "\"#{word}\",\"#{meaning}\",\"#{synonym}\",\"#{ethymology}\",\"#{mana}\",\"#{usage}\",\"#{example}\"\n"
+    end
+    File.open("nagili/fixed_dictionary.csv", "w") do |file|
+      file.puts(output)
     end
   end
 
