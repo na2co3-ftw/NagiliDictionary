@@ -32,6 +32,7 @@ class NagiliDictionary
         delete
       when "update"
         update
+        create_fixed_dictionary_data(true)
         create_mana_data(true)
         create_search_index(true)
         change_due_date(true)
@@ -347,6 +348,14 @@ class NagiliDictionary
     print(NagiliSource.header(password))
     print(html)
     print(NagiliSource.footer)
+  end
+
+  def create_fixed_dictionary_data(create_only = false)
+    NagiliUtilities.create_fixed_dictionary_data
+    unless create_only
+      print(NagiliSource.html_header(false))
+      print("done")
+    end
   end
 
   def create_mana_data(create_only = false)
