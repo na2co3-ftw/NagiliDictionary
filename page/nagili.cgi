@@ -38,6 +38,8 @@ class NagiliDictionary
         change_due_date(true)
       when "twitter"
         create_twitter_data
+      when "dictionary"
+        create_fixed_dictionary_data
       when "mana"
         create_mana_data
       when "index"
