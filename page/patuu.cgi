@@ -395,7 +395,7 @@ class PatuuPanwan
     modification.gsub!(/\s*\\\s*/, "\n")
     modification.gsub!(/\s*¥\s*/, "\n")
     data = Array.new(6)
-    type_index = {:meaning => 1, :synonym => 2, :ethymology => 3, :mana => 4, :usage => 5, :example => 6}[type]
+    type_index = {:meaning => 0, :synonym => 1, :ethymology => 2, :mana => 3, :usage => 4, :example => 5}[type]
     data[type_index] = modification
     result = NagiliUtilities.modify_fixed_dictionary_data(word, *data)
     delete_dictionary_backups
