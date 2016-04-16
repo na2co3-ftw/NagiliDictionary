@@ -169,6 +169,8 @@ class PatuuPanwan
       type_match = data.find{|s, _| fixed_reply.include?(s)}
       type = (type_match) ? match[1] : nil
       modify_word_preparation(reply_user_name, reply_user_id, tweet_id, word, type)
+    elsif reply.include?("更新")
+      update_index(reply_user_name, reply_user_id, tweet_id)
     elsif reply.include?("造語")
       match = reply.match(/「(.+)」/)
       word = (match) ? match[1] : nil
@@ -315,6 +317,19 @@ class PatuuPanwan
       end
     else
       content = "@#{user_name} すみません、あなたには依頼削除の権利がないです。" + self.addition
+    end
+    result = @patuu.reply(content, tweet_id)
+    output_final_result(result)
+  end
+
+  def update_index(user_name, user_id, tweet_id)
+    @output << "＊ UPDATE INDEX\n"
+    @output << "from: (#{user_name}, #{tweet_id})\n"
+    if ADMINISTERS.include?(user_id)
+      NagiliUtilities.create_fixed_dictionary_data
+      content = "@#{user_name} 更新しました。" + self.addition
+    else
+      content = "@#{user_name} すみません、あなたには辞書データを更新する権利がないです。" + self.addition
     end
     result = @patuu.reply(content, tweet_id)
     output_final_result(result)
