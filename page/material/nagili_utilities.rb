@@ -306,10 +306,7 @@ module NagiliUtilities;extend self
   # 正常にデータのバックアップが終了した場合は、データのバイト数を返します。
   def backup_dictionary_data(name = "temporary")
     time_string = Time.now.strftime("%Y%m%d%H%M%S")
-    old_data = ""
-    File.open("nagili/dictionary.csv", "r") do |file|
-      old_data = file.read
-    end
+    old_data = File.read("nagili/dictionary.csv", "r")
     File.open("nagili/backup/#{name}-#{time_string}.csv", "w") do |file|
       file.puts(old_data)
     end
@@ -352,13 +349,8 @@ module NagiliUtilities;extend self
   # 指定された単語が登録されていない場合は、単語の削除をせずに nil を返します。
   def delete_dictionary_data(word)
     dictionary = self.dictionary_data
-    index = nil
-    dictionary.each_with_index do |data, i|
-      if data[0] == word
-        index = i
-        break
-      end
-    end
+    match = dictionary.map.with_index.find{|s, _| s[0] == word}
+    index = (match) ? match[1] : nil
     if index
       dictionary.delete_at(index)
       return self.update_dictionary_data(dictionary)
@@ -374,27 +366,17 @@ module NagiliUtilities;extend self
   def modify_fixed_dictionary_data(word, meaning, synonym, ethymology, mana, usage, example)
     dictionary = self.dictionary_data
     fixed_dictionary = self.fixed_dictionary_data
-    index = nil
-    fixed_index = nil
-    dictionary.each_with_index do |data, i|
-      if data[0] == word
-        index = i
-        break
-      end
-    end
-    fixed_dictionary.each_with_index do |data, i|
-      if data[0] == word
-        fixed_index = i
-        break
-      end
-    end
+    match = dictionary.map.with_index.find{|s, _| s[0] == word}
+    index = (match) ? match[1] : nil
+    fixed_match = fixed_dictionary.map.with_index.find{|s, _| s[0] == word}
+    fixed_index = (fixed_match) ? fixed_match[1] : nil
     if index && fixed_index
-      new_meaning = (meaning) ? meaning : fixed_dictionary[fixed_index][1]
-      new_synonym = (synonym) ? synonym : fixed_dictionary[fixed_index][2]
-      new_ethymology = (ethymology) ? ethymology : fixed_dictionary[fixed_index][3]
-      new_mana = (mana) ? mana : fixed_dictionary[fixed_index][4]
-      new_usage = (usage) ? usage : fixed_dictionary[fixed_index][5]
-      new_example = (example) ? example : fixed_dictionary[fixed_index][6]
+      new_meaning = meaning || fixed_dictionary[fixed_index][1]
+      new_synonym = synonym || fixed_dictionary[fixed_index][2]
+      new_ethymology = ethymology || fixed_dictionary[fixed_index][3]
+      new_mana = mana || fixed_dictionary[fixed_index][4]
+      new_usage = usage || fixed_dictionary[fixed_index][5]
+      new_example = example || fixed_dictionary[fixed_index][6]
       new_translation = new_meaning.strip + "\n" + new_synonym.strip + "\n" + new_ethymology.strip + "\n" + new_mana.strip + "\n" + new_usage.strip
       new_translation = new_translation.gsub(/\n+/, "\n").strip
       new_example = new_example.strip

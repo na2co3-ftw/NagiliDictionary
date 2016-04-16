@@ -56,7 +56,7 @@ class PatuuPanwan
   end
 
   def react_mentions
-    last_tweet_id = File.read("nagili/last_tweet_id.txt", "r").to_i
+    last_tweet_id = File.read("nagili/last_tweet_id.txt").to_i
     mentions = @patuu.mentions
     @output << "last_tweed_id: #{last_tweet_id}\n\n"
     unless mentions.include?("errors")
@@ -69,159 +69,134 @@ class PatuuPanwan
       mentions.each do |data|
         tweet_id = data["id"]
         reply = data["text"].pack_unicode
-        reply.gsub!("&amp;", "&")
-        reply.gsub!("&lt;", "<")
-        reply.gsub!("&gt;", ">")
+        reply = reply.gsub("&lt;", "<").gsub("&gt;", ">").gsub("&amp;", "&")
         reply_user_name = data["user"]["screen_name"]
         reply_user_id = data["user"]["id"]
         reply_tweet_id = data["in_reply_to_status_id"]
-        queue_id = nil
+        conduct_option = [reply, reply_user_name, reply_user_id, reply_tweet_id, tweet_id]
         if self.awake?
-          if reply_tweet_id
-            @queue.each_with_index do |line, i|
-              first_tweet_id, date, mode, options = line.strip.split(/;\s*/)
-              mode = mode.intern
-              options = options.split(/,\s*/)
-              if reply_tweet_id == first_tweet_id.to_i
-                if mode == :modify_word
-                  if reply.strip.match(/続く$/)
-                    previous_tweet_ids = options[2..-1] + [tweet_id.to_s]
-                    add_queue(tweet_id, :modify_word, "#{options[0]}, #{options[1]}, #{previous_tweet_ids.join(", ")}")
-                  else
-                    additions = options[2..-1].map do |additional_tweet_id|
-                      additional_data = @patuu.tweet_by_id(additional_tweet_id.to_i)
-                      next (additional_data.include?("text")) ? additional_data["text"].pack_unicode.strip.gsub(/続く$/, "") : ""
-                    end
-                    modify_word(reply_user_name, tweet_id, options[0], options[1].intern, additions.join("") + reply)
-                  end
-                  queue_id = i
-                  break
-                elsif mode == :create_word
-                  if reply.strip.match(/続く$/)
-                    previous_tweet_ids = options[1..-1] + [tweet_id.to_s]
-                    add_queue(tweet_id, :create_word, "#{options[0]}, #{previous_tweet_ids.join(", ")}")
-                  else
-                    additions = options[1..-1].map do |additional_tweet_id|
-                      additional_data = @patuu.tweet_by_id(additional_tweet_id.to_i)
-                      next (additional_data.include?("text")) ? additional_data["text"].pack_unicode.strip.gsub(/続く$/, "") : ""
-                    end
-                    create_word(reply_user_name, tweet_id, options[0], additions.join("") + reply)
-                  end
-                  queue_id = i
-                  break
-                elsif mode == :search_detailed_word && ["詳細", "詳しく"].any?{|s| reply.include?(s)}
-                  match = reply.match(/(\d+)/)
-                  detailed_index = (match) ? match[1].to_i - 1 : 0
-                  detailed_index = [detailed_index, 0].max
-                  search_word(reply_user_name, tweet_id, options[0], detailed_index)
-                  queue_id = i
-                  break
-                elsif mode == :add_requests && ["はい", "うん", "する", "します", "しといて", "よろしく", "お願い"].any?{|s| reply.include?(s)}
-                  add_requests(reply_user_name, tweet_id, options[0])
-                  queue_id = i
-                  break
-                elsif mode == :check_word_url && ["URL", "アドレス"].any?{|s| reply.include?(s)}
-                  check_word_url(reply_user_name, tweet_id, options[0])
-                  queue_id = i
-                  break
-                elsif mode == :check_multiple_word_url && ["URL", "アドレス"].any?{|s| reply.include?(s)}
-                  match = reply.match(/(\d+)/)
-                  index = (match) ? match[1].to_i - 1 : 0
-                  index = [[index, 0].max, options.size - 1].min
-                  check_word_url(reply_user_name, tweet_id, options[index])
-                  queue_id = i
-                  break
-                end
-              end
-            end
-          end
-          if queue_id
-            @queue.delete_at(queue_id)
-          else
-            if reply.include?("訳語検索")
-              match = reply.match(/「(.+)」/u) 
-              word = (match) ? match[1] : nil
-              search_meaning(reply_user_name, tweet_id, word)
-            elsif reply.include?("単語検索")
-              match = reply.match(/「(.+)」/u)
-              word = (match) ? match[1] : nil
-              fixed_reply = reply.gsub(/「(.+)」/, "")
-              if ["詳細", "詳しく"].any?{|s| fixed_reply.include?(s)}
-                search_word(reply_user_name, tweet_id, word, 0)
-              else
-                search_word(reply_user_name, tweet_id, word)
-              end
-            elsif reply.include?("ランダム") && reply.include?("依頼")
-              check_recent_requests(reply_user_name, tweet_id, true)
-            elsif reply.include?("最近") && reply.include?("依頼")
-              check_recent_requests(reply_user_name, tweet_id, false)
-            elsif reply.include?("削除") && reply.include?("依頼")
-              match = reply.match(/「(.+)」/u)
-              requests = (match) ? match[1] : nil
-              delete_requests(reply_user_name, reply_user_id, tweet_id, requests)
-            elsif reply.include?("依頼")
-              match = reply.match(/「(.+)」/u)
-              requests = (match) ? match[1] : nil
-              add_requests(reply_user_name, tweet_id, requests)
-            elsif reply.include?("修正") || reply.include?("編集")
-              if match = reply.match(/「(.+)」/u)
-                fixed_reply = reply.gsub(/「(.+)」/, "")
-                if fixed_reply.include?("訳語")
-                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :meaning)
-                elsif fixed_reply.include?("関連語")
-                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :synonym)
-                elsif fixed_reply.include?("語源")
-                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :ethymology)
-                elsif fixed_reply.include?("京極")
-                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :mana)
-                elsif fixed_reply.include?("語法")
-                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :usage)
-                elsif fixed_reply.include?("用例")
-                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], :example)
-                else 
-                  modify_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1], nil)
-                end
-              else
-                modify_word_preparation(reply_user_name, reply_user_id, tweet_id, nil, nil)
-              end
-            elsif reply.include?("造語")
-              if match = reply.match(/「(.+)」/u)
-                create_word_preparation(reply_user_name, reply_user_id, tweet_id, match[1])
-              else
-                create_word_preparation(reply_user_name, reply_user_id, tweet_id, nil)
-              end
-            elsif reply.include?("削除")
-              if match = reply.match(/「(.+)」/u)
-                delete_word(reply_user_name, reply_user_id, tweet_id, match[1])
-              else
-                delete_word(reply_user_name, reply_user_id, tweet_id, nil)
-              end              
-            elsif reply.include?("単語数")
-              check_word_number(reply_user_name, tweet_id)
-            elsif reply.include?("CSV")
-              check_csv_url(reply_user_name, tweet_id)
-            elsif reply.include?("バージョン")
-              check_version(reply_user_name, tweet_id)
-            elsif reply.include?("緊急停止")
-              force_halt(reply_user_name, reply_user_id, tweet_id)
-            elsif reply.include?("できること") ||
-                  (reply.include?("できる") && ["?", "？"].any?{|s| reply.include?(s)} && ["何", "なに", "どう", "どんな"].any?{|s| reply.include?(s)})
-              help(reply_user_name, tweet_id)
-            elsif ["起きて", "起床"].any?{|s| reply.include?(s)}
-            else
-              favorite(tweet_id)
-            end
+          if !reply_tweet_id || !conduct_reply(*conduct_option)
+            conduct(*conduct_option)
           end
         else
-          if ["起きて", "起床"].any?{|s| reply.include?(s)}
-            force_wake(reply_user_name, tweet_id)
-          end
+          conduct_sleeping(*conduct_option)
         end
         @count += 1
       end
     else
       @output << "＊ QUEUE ERROR\n"
       @output << mentions["errors"].pretty_inspect + "\n\n"
+    end
+  end
+
+  def conduct_reply(reply, reply_user_name, reply_user_id, reply_tweet_id, tweet_id)
+    result = @queue.reject! do |line|
+      first_tweet_id, date, mode, options = line.strip.split(/;\s*/)
+      mode = mode.intern
+      options = options.split(/,\s*/)
+      if reply_tweet_id == first_tweet_id.to_i
+        if mode == :modify_word
+          if reply.strip.match(/続く$/)
+            previous_tweet_ids = options[2..-1] + [tweet_id.to_s]
+            add_queue(tweet_id, :modify_word, "#{options[0]}, #{options[1]}, #{previous_tweet_ids.join(", ")}")
+          else
+            additions = options[2..-1].map do |additional_tweet_id|
+              additional_data = @patuu.tweet_by_id(additional_tweet_id.to_i)
+              next (additional_data.include?("text")) ? additional_data["text"].pack_unicode.strip.gsub(/続く$/, "") : ""
+            end
+            modify_word(reply_user_name, tweet_id, options[0], options[1].intern, additions.join("") + reply)
+          end
+        elsif mode == :create_word
+          if reply.strip.match(/続く$/)
+            previous_tweet_ids = options[1..-1] + [tweet_id.to_s]
+            add_queue(tweet_id, :create_word, "#{options[0]}, #{previous_tweet_ids.join(", ")}")
+          else
+            additions = options[1..-1].map do |additional_tweet_id|
+              additional_data = @patuu.tweet_by_id(additional_tweet_id.to_i)
+              next (additional_data.include?("text")) ? additional_data["text"].pack_unicode.strip.gsub(/続く$/, "") : ""
+            end
+            create_word(reply_user_name, tweet_id, options[0], additions.join("") + reply)
+          end
+        elsif mode == :search_detailed_word && ["詳細", "詳しく"].any?{|s| reply.include?(s)}
+          match = reply.match(/(\d+)/)
+          detailed_index = (match) ? [match[1].to_i - 1, 0].max : 0
+          search_word(reply_user_name, tweet_id, options[0], detailed_index)
+        elsif mode == :add_requests && ["はい", "うん", "する", "します", "しといて", "よろしく", "お願い"].any?{|s| reply.include?(s)}
+          add_requests(reply_user_name, tweet_id, options[0])
+        elsif mode == :check_word_url && ["URL", "アドレス"].any?{|s| reply.include?(s)}
+          check_word_url(reply_user_name, tweet_id, options[0])
+        elsif mode == :check_multiple_word_url && ["URL", "アドレス"].any?{|s| reply.include?(s)}
+          match = reply.match(/(\d+)/)
+          index = (match) ? [[match[1].to_i - 1, 0].max, options.size - 1].min : 0
+          check_word_url(reply_user_name, tweet_id, options[index])
+        else
+          next false
+        end
+        next true
+      end
+    end
+    return result
+  end
+
+  def conduct(reply, reply_user_name, reply_user_id, reply_tweet_id, tweet_id)
+    if reply.include?("訳語検索")
+      match = reply.match(/「(.+)」/)
+      word = (match) ? match[1] : nil
+      search_meaning(reply_user_name, tweet_id, word)
+    elsif reply.include?("単語検索")
+      match = reply.match(/「(.+)」/)
+      word = (match) ? match[1] : nil
+      fixed_reply = reply.gsub(/「(.+)」/, "")
+      detailed_index = (["詳細", "詳しく"].any?{|s| fixed_reply.include?(s)}) ? 0 : nil
+      search_word(reply_user_name, tweet_id, word, detailed_index)
+    elsif reply.include?("ランダム") && reply.include?("依頼")
+      check_recent_requests(reply_user_name, tweet_id, true)
+    elsif reply.include?("最近") && reply.include?("依頼")
+      check_recent_requests(reply_user_name, tweet_id, false)
+    elsif reply.include?("削除") && reply.include?("依頼")
+      match = reply.match(/「(.+)」/)
+      requests = (match) ? match[1] : nil
+      delete_requests(reply_user_name, reply_user_id, tweet_id, requests)
+    elsif reply.include?("依頼")
+      match = reply.match(/「(.+)」/)
+      requests = (match) ? match[1] : nil
+      add_requests(reply_user_name, tweet_id, requests)
+    elsif reply.include?("修正") || reply.include?("編集")
+      data = {"訳語" => :meaning, "関連語" => :synonym, "語源" => :ethymology, "京極" => :mana, "語法" => :usage, "用例" => :example}
+      word_match = reply.match(/「(.+)」/)
+      word = (word_match) ? match[1] : nil
+      fixed_reply = reply.gsub(/「(.+)」/, "")
+      type_match = data.find{|s, _| fixed_reply.include?(s)}
+      type = (type_match) ? match[1] : nil
+      modify_word_preparation(reply_user_name, reply_user_id, tweet_id, word, type)
+    elsif reply.include?("造語")
+      match = reply.match(/「(.+)」/)
+      word = (match) ? match[1] : nil
+      create_word_preparation(reply_user_name, reply_user_id, tweet_id, word)
+    elsif reply.include?("削除")
+      match = reply.match(/「(.+)」/)
+      word = (match) ? match[1] : nil
+      delete_word(reply_user_name, reply_user_id, tweet_id, word)
+    elsif reply.include?("単語数")
+      check_word_number(reply_user_name, tweet_id)
+    elsif reply.include?("CSV")
+      check_csv_url(reply_user_name, tweet_id)
+    elsif reply.include?("バージョン")
+      check_version(reply_user_name, tweet_id)
+    elsif reply.include?("緊急停止")
+      force_halt(reply_user_name, reply_user_id, tweet_id)
+    elsif reply.include?("できること") ||
+          (reply.include?("できる") && ["?", "？"].any?{|s| reply.include?(s)} && ["何", "なに", "どう", "どんな"].any?{|s| reply.include?(s)})
+      help(reply_user_name, tweet_id)
+    elsif ["起きて", "起床"].any?{|s| reply.include?(s)}
+    else
+      favorite(tweet_id)
+    end
+  end
+
+  def conduct_sleeping(reply, reply_user_name, reply_user_id, reply_tweet_id, tweet_id)
+    if ["起きて", "起床"].any?{|s| reply.include?(s)}
+      force_wake(reply_user_name, tweet_id)
     end
   end
 
@@ -238,12 +213,12 @@ class PatuuPanwan
           content = matched[detailed_index][1].gsub("\n", "")
           address_length = address.length
           new_tweet_id = tweet_id
-          splited_content = content.split(//u)
+          splited_content = content.split(//)
           content_length = 140 - address_length
           result = []
           3.times do
             part_data = splited_content[0...content_length]
-            splited_content = (splited_content[content_length..-1]) ? splited_content[content_length..-1] : []
+            splited_content = splited_content[content_length..-1] || []
             unless part_data.empty?
               result = @patuu.reply(address + part_data.join(""), new_tweet_id)
               if result.include?("id")
@@ -297,13 +272,15 @@ class PatuuPanwan
         content << "「#{word}」で検索しました→ "
         content << search.join(" / ")
         result = @patuu.reply(content, tweet_id)
-        add_queue(result["id"], :check_multiple_word_url, search_words) if result.include?("id")
+        if result.include?("id")
+          add_queue(result["id"], :check_multiple_word_url, search_words)
+        end
       else
         content << "「#{word}」が訳語になってる単語はないみたいです。造語依頼しますか? " + self.addition
         result = @patuu.reply(content, tweet_id)
         if result.include?("id")
           @output << "ask request: (#{result["id"]}, #{word})\n"
-          add_queue(result["id"], :add_requests, word) if result.include?("id")
+          add_queue(result["id"], :add_requests, word)
         end
       end
     else
@@ -358,12 +335,12 @@ class PatuuPanwan
             content << "現在のデータ: " + present_data
             address_length = address.length
             new_tweet_id = tweet_id
-            splited_content = content.split(//u)
+            splited_content = content.split(//)
             content_length = 140 - address_length
             result = []
             3.times do
               part_data = splited_content[0...content_length]
-              splited_content = (splited_content[content_length..-1]) ? splited_content[content_length..-1] : []
+              splited_content = splited_content[content_length..-1] || []
               unless part_data.empty?
                 result = @patuu.reply(address + part_data.join(""), new_tweet_id)
                 if result.include?("id")
@@ -402,20 +379,10 @@ class PatuuPanwan
     @output << "modification content: #{modification.strip}\n"
     modification.gsub!(/\s*\\\s*/, "\n")
     modification.gsub!(/\s*¥\s*/, "\n")
-    case type
-    when :meaning
-      result = NagiliUtilities.modify_fixed_dictionary_data(word, modification, nil, nil, nil, nil, nil)
-    when :synonym
-      result = NagiliUtilities.modify_fixed_dictionary_data(word, nil, modification, nil, nil, nil, nil)
-    when :ethymology
-      result = NagiliUtilities.modify_fixed_dictionary_data(word, nil, nil, modification, nil, nil, nil)
-    when :mana
-      result = NagiliUtilities.modify_fixed_dictionary_data(word, nil, nil, nil, modification, nil, nil)
-    when :usage
-      result = NagiliUtilities.modify_fixed_dictionary_data(word, nil, nil, nil, nil, modification, nil)
-    when :example
-      result = NagiliUtilities.modify_fixed_dictionary_data(word, nil, nil, nil, nil, nil, modification)
-    end
+    data = Array.new(6)
+    type_index = {:meaning => 1, :synonym => 2, :ethymology => 3, :mana => 4, :usage => 5, :example => 6}[type]
+    data[type_index] = modification
+    result = NagiliUtilities.modify_fixed_dictionary_data(word, *data)
     delete_dictionary_backups
     @output << "modification result: #{result.to_s}\n"
     content = "@#{user_name} 修正しました。" + self.addition
@@ -557,7 +524,8 @@ class PatuuPanwan
   def help(user_name, tweet_id)
     @output << "＊ HELP\n"
     @output << "from: (#{user_name}, #{tweet_id})\n"
-    content = "@#{user_name} #{HELP_DATA[rand(6)]}" + self.addition
+    help_data = HELP_DATA[rand(HELP_DATA.size)]
+    content = "@#{user_name} #{help_data}" + self.addition
     result = @patuu.reply(content, tweet_id)
     output_final_result(result) 
   end
@@ -656,10 +624,7 @@ class PatuuPanwan
   def observe_absent
     if @time.hour == 20 && @time.min == 40
       date_string = Time.now.strftime("%Y/%m/%d")
-      due_date = ""
-      File.open("nagili/due_date.txt", "r") do |file|
-        due_date = file.read
-      end
+      due_date = File.read("nagili/due_date.txt")
       if due_date <= date_string
         @patuu.tweet("@ayukawamay 最近造語がないですよ。")
         change_due_date
@@ -676,12 +641,8 @@ class PatuuPanwan
   end
 
   def get_queue
-    File.open("nagili/queue.txt", "r") do |file|
-      @queue = file.read.split(/\n/)
-    end
-    File.open("nagili/count.txt", "r") do |file|
-      @count = file.read.to_i
-    end
+    @queue = File.read("nagili/queue.txt").split(/\n/)
+    @count = File.read("nagili/count.txt", "r").to_i
   end
 
   def arrange_queue
@@ -720,9 +681,7 @@ class PatuuPanwan
 
   def prepare
     time_string = @time.strftime("%Y/%m/%d %H:%M:%S")
-    File.open("nagili/heart.txt", "r") do |file|
-      @status = file.read
-    end
+    @status = File.read("nagili/heart.txt")
     @output << "【 PatuuPanwan (#{NagiliUtilities.version}) @ #{time_string} #{@status} 】\n"
   end
 
