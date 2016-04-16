@@ -657,7 +657,7 @@ class PatuuPanwan
 
   def get_queue
     @queue = File.read("nagili/queue.txt").split(/\n/)
-    @count = File.read("nagili/count.txt", "r").to_i
+    @count = File.read("nagili/count.txt").to_i
   end
 
   def arrange_queue
