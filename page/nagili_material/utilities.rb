@@ -109,11 +109,11 @@ module Utilities;extend self
       end
     end
     manas.delete_if do |name, mana|
-      splited_mana = mana.split(//)
-      if splited_mana.all?{|s| single_manas.key?(s)}
-        splited_mana = splited_mana.map{|s| single_manas[s]}
-        possible_reading = splited_mana[0].product(*splited_mana[1..-1]).map{|s| s.join("")}
-        next possible_reading.any?{|s| name == s}
+      splitted_mana = mana.split(//)
+      if splitted_mana.all?{|s| single_manas.key?(s)}
+        splitted_mana = splitted_mana.map{|s| single_manas[s]}
+        possible_readings = splitted_mana[0].product(*splitted_mana[1..-1]).map{|s| s.join("")}
+        next possible_readings.any?{|s| name == s}
       else
         next false
       end
