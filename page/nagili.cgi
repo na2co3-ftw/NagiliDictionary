@@ -94,7 +94,7 @@ class NagiliOnline
       html << "<div class=\"suggest\">\n" 
       suggested.each do |word, suggest_type|
         html << "<span class=\"maybe\">もしかして:</span>"
-        html << Source.word_link_html(password, word)
+        html << Source.word_link_html(password, word.name)
         html << " の#{suggest_type}?<br>\n"
       end
       html << "</div>\n\n"
