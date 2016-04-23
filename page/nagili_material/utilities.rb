@@ -108,16 +108,6 @@ module Utilities;extend self
         single_manas[mana] << name
       end
     end
-    manas.delete_if do |name, mana|
-      splitted_mana = mana.split(//)
-      if splitted_mana.all?{|s| single_manas.key?(s)}
-        splitted_mana = splitted_mana.map{|s| single_manas[s]}
-        possible_readings = splitted_mana[0].product(*splitted_mana[1..-1]).map{|s| s.join("")}
-        next possible_readings.any?{|s| name == s}
-      else
-        next false
-      end
-    end
     manas.each do |name, mana|
       unknown_manas[mana] << name
     end
