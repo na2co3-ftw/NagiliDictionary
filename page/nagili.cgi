@@ -60,7 +60,7 @@ class NagiliOnline
     print(Source.footer)
   end
 
-  def request_default
+  def prepare_request
     print(Source.html_header)
     print(Source.header)
     print(Source.request_default)
