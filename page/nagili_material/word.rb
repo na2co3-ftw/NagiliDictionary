@@ -257,3 +257,45 @@ class Word
   end
 
 end
+
+
+class << Word
+
+  def new_raw(name, translation, explanation)
+    meaning = ""
+    synonym = ""
+    ethymology = ""
+    mana = ""
+    usage = ""
+    example = ""
+    mana_flag = true
+    ethymology_flag = true
+    example_flag = false
+    data = translation + "\n" + explanation
+    data.each_line do |line|
+      if Utilities::WORD_CLASSES.any?{|s, _| line.include?(s)}
+        meaning << line
+      elsif Utilities::WORD_TAGS.any?{|s| line.include?(s)}
+        synonym << line
+      elsif Utilities::MAIN_TAGS.any?{|s| line.include?(s)}
+        usage << line
+        example_flag = false
+      elsif Utilities::EXAMPLE_TAGS.any?{|s| line.include?(s)}
+        example << line
+        example_flag = true
+      elsif ethymology_flag && (line.match(/\d+:.+/) || line.match(/^seren/))
+        ethymology << line
+        ethymology_flag = false
+      elsif mana_flag && line.match(/([a-z\s\[\]\/]*)\s*([^a-z\s\[\]\/]*)/)
+        mana << line
+        mana_flag = false
+      elsif example_flag
+        example << line
+      else
+        usage << line
+      end
+    end
+    return Word.new(name, meaning, synonym, ethymology, mana, usage, example)
+  end
+
+end

@@ -27,41 +27,9 @@ module Utilities;extend self
     dictionary = File.read("nagili/raw_words.csv").scan(/"(.*?)","(.*?)","(.*?)",(.*?),(.*?),(.*?),"(.*?)"\n/m)
     output = ""
     dictionary.each do |data|
-      name = data[0]
-      meaning = ""
-      synonym = ""
-      ethymology = ""
-      mana = ""
-      usage = ""
-      example = ""
-      mana_flag = true
-      ethymology_flag = true
-      example_flag = false
-      explanation = data[1] + "\n" + data[2]
-      explanation.each_line do |line|
-        if WORD_CLASSES.any?{|s, _| line.include?(s)}
-          meaning << line
-        elsif WORD_TAGS.any?{|s| line.include?(s)}
-          synonym << line
-        elsif MAIN_TAGS.any?{|s| line.include?(s)}
-          usage << line
-          example_flag = false
-        elsif EXAMPLE_TAGS.any?{|s| line.include?(s)}
-          example << line
-          example_flag = true
-        elsif ethymology_flag && (line.match(/\d+:.+/) || line.match(/^seren/))
-          ethymology << line
-          ethymology_flag = false
-        elsif mana_flag && line.match(/([a-z\s\[\]\/]*)\s*([^a-z\s\[\]\/]*)/)
-          mana << line
-          mana_flag = false
-        elsif example_flag
-          example << line
-        else
-          usage << line
-        end
-      end
-      data = [name, meaning, synonym, ethymology, mana, usage, example]
+      name, translation, explanation, _ = data
+      word = Word.new_raw(name, translation, explanation)
+      data = [word.name, word.meaning, word.synonym, word.ethymology, word.mana, word.usage, word.example]
       output << data.map{|s| "\"#{s}\""}.join(",") + "\n"
     end
     File.open("nagili/words.csv", "w") do |file|

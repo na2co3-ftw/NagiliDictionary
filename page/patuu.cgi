@@ -434,7 +434,7 @@ class PatuuPanwan
     creation.gsub!(/\s*¥\s*/, "\n")
     splitted_creation = creation.split(/(#{Utilities::EXAMPLE_TAGS.join("|")})/, 2)
     dictionary = WordDictionary.new
-    word = Word.new(name, "", "", "", "", splitted_creation[0], splitted_creation[1].to_s)
+    word = Word.new_raw(name, splitted_creation[0], splitted_creation[1].to_s)
     result = dictionary.add_word(word)
     Utilities.delete_backups
     Utilities.change_due_date
