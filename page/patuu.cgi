@@ -513,7 +513,7 @@ class PatuuPanwan
     @output << "＊ CHECK CSV URL\n"
     @output << "from: (#{user_name}, #{tweet_id})\n"
     content = "@#{user_name} 最新のCSVです。UTF-8で保存されているので、適宜文字コードの変換をしてください。" + self.addition
-    content << " http://nagili.minibird.jp/page/nagili/raw_word.csv"
+    content << " http://nagili.minibird.jp/page/nagili/raw_words.csv"
     result = @patuu.reply(content, tweet_id)
     output_final_result(result)
   end
